@@ -1,11 +1,10 @@
 package edu.petrov.gojavaonline.module04;
-
 import java.util.Scanner;
 
 /**
  * Created by anton on 04/03/16.
  */
-public class Module04 {
+public class Module042 {
 
     private static final String CONVERSION_ERROR_MESSAGE = "Error! Please, enter correct degrees value!";
     private static String GREETING_MESSAGE = "Welcome to temperature degrees conversion program!\n" +
