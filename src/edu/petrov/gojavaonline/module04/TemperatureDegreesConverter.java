@@ -39,7 +39,7 @@ public class TemperatureDegreesConverter {
     }
 
     public static String convertToString(String degreeValue) throws IncorrectDegreeFormatException {
-        return String.format("%.2f%c\n", convertToDouble(degreeValue), getDegreeLetter(degreeValue) == 'F' ? 'C' : 'F');
+        return String.format("%.2f%c", convertToDouble(degreeValue), getDegreeLetter(degreeValue) == 'F' ? 'C' : 'F');
     }
 
     private static char getDegreeLetter(String degreeValue) throws IncorrectDegreeFormatException {
