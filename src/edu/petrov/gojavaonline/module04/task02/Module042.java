@@ -14,14 +14,12 @@ public class Module042 {
 
 
     public static void main(String[] args) {
-
         System.out.println(GREETING_MESSAGE);
-
         Scanner scanner = new Scanner(System.in);
 
         do {
             try {
-                String degreeValue = "";
+                String degreeValue;
                 System.out.print("> ");
                 degreeValue = scanner.nextLine().toLowerCase();
 
@@ -29,6 +27,7 @@ public class Module042 {
                     break;
 
                 System.out.format("%s = %s\n", degreeValue.toUpperCase(), TemperatureDegreeConverter.convertAsString(degreeValue));
+
             } catch (IncorrectDegreeFormatException e) {
                 System.out.println(CONVERSION_ERROR_MESSAGE);
             }
