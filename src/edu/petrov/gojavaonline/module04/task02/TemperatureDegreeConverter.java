@@ -1,9 +1,9 @@
-package edu.petrov.gojavaonline.module04;
+package edu.petrov.gojavaonline.module04.task02;
 
 /**
  * Created by anton on 04/03/16.
  */
-public class TemperatureDegreesConverter {
+public class TemperatureDegreeConverter {
 
     /**
      * Depending on the degrees letter in degreeValue, converts Celsius to Fahrenheit or vice versa
@@ -13,7 +13,7 @@ public class TemperatureDegreesConverter {
      * @return Converted degrees value as double
      * @throws IncorrectDegreeFormatException
      */
-    public static double convertToDouble(String degreeValue) throws IncorrectDegreeFormatException {
+    public static double convertAsDouble(String degreeValue) throws IncorrectDegreeFormatException {
 
         if (degreeValue != null) {
             try {
@@ -22,10 +22,10 @@ public class TemperatureDegreesConverter {
 
                 switch (Character.toUpperCase(degreeLetter)) {
                     case 'C':
-                        conversionValue = TemperatureDegrees.FAHRENHEIT.getDegree(conversionValue);
+                        conversionValue = convertCelsiusToFahrenheit(conversionValue);
                         break;
                     case 'F':
-                        conversionValue = TemperatureDegrees.CELSIUS.getDegree(conversionValue);
+                        conversionValue = convertFahrenheitToCelsius(conversionValue);
                         break;
                 }
 
@@ -38,8 +38,16 @@ public class TemperatureDegreesConverter {
         return 0;
     }
 
-    public static String convertToString(String degreeValue) throws IncorrectDegreeFormatException {
-        return String.format("%.2f%c", convertToDouble(degreeValue), getDegreeLetter(degreeValue) == 'F' ? 'C' : 'F');
+    public static String convertAsString(String degreeValue) throws IncorrectDegreeFormatException {
+        return String.format("%.2f%c", convertAsDouble(degreeValue), getDegreeLetter(degreeValue) == 'F' ? 'C' : 'F');
+    }
+
+    public static double convertFahrenheitToCelsius(double value) {
+        return TemperatureDegree.CELSIUS.convertValueFrom(value);
+    }
+
+    public static double convertCelsiusToFahrenheit(double value) {
+        return TemperatureDegree.FAHRENHEIT.convertValueFrom(value);
     }
 
     private static char getDegreeLetter(String degreeValue) throws IncorrectDegreeFormatException {

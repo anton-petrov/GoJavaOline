@@ -1,4 +1,5 @@
-package edu.petrov.gojavaonline.module04;
+package edu.petrov.gojavaonline.module04.task02;
+
 import java.util.Scanner;
 
 /**
@@ -27,7 +28,7 @@ public class Module042 {
                 if (degreeValue.equals("q") || degreeValue.equals("quit"))
                     break;
 
-                System.out.format("%s = %s\n", degreeValue.toUpperCase(), TemperatureDegreesConverter.convertToString(degreeValue));
+                System.out.format("%s = %s\n", degreeValue.toUpperCase(), TemperatureDegreeConverter.convertAsString(degreeValue));
             } catch (IncorrectDegreeFormatException e) {
                 System.out.println(CONVERSION_ERROR_MESSAGE);
             }

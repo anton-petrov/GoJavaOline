@@ -1,13 +1,16 @@
-package edu.petrov.gojavaonline.module04;
+package edu.petrov.gojavaonline.module04.task02;
 
 /**
  * Created by anton on 04/03/16.
  */
-public enum TemperatureDegrees {
+public enum TemperatureDegree {
     FAHRENHEIT,
     CELSIUS;
 
-    public double getDegree(double degree) {
+    private double value;
+
+
+    public double convertValueFrom(double degree) {
         // convert degrees...
         switch (this) {
             // ...form celsius to fahrenheit
@@ -19,5 +22,13 @@ public enum TemperatureDegrees {
             default:
                 return 0;
         }
+    }
+
+    public double getValue() {
+        return convertValueFrom(value);
+    }
+
+    public void setValue(double value) {
+        this.value = value;
     }
 }
