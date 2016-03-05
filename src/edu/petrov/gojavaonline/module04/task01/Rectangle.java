@@ -5,11 +5,11 @@ package edu.petrov.gojavaonline.module04.task01;
  */
 
 
-public class Pryamougolnik extends Figure {
+public class Rectangle extends Figure {
     double width;
     double height;
 
-    public Pryamougolnik(double width, int height) {
+    public Rectangle(double width, int height) {
         this.width = width;
         this.height = height;
     }
@@ -31,7 +31,7 @@ public class Pryamougolnik extends Figure {
     }
 
     @Override
-    public double getSquare() {
+    public double getArea() {
         return width * height;
     }
 }

@@ -5,7 +5,7 @@ import java.util.Scanner;
 /**
  * Created by anton on 04/03/16.
  */
-public class Module042 {
+public class Main {
 
     private static final String CONVERSION_ERROR_MESSAGE = "Error! Please, enter correct degrees value!";
     private static String GREETING_MESSAGE = "Welcome to temperature degrees conversion program!\n" +

@@ -8,6 +8,7 @@ package edu.petrov.gojavaonline.module04.task02;
  * @author anton
  * @version 1
  */
+
 public class TemperatureDegreeConverter {
 
     /**
@@ -51,8 +52,13 @@ public class TemperatureDegreeConverter {
      * @return Converted degrees value as String. For example: for input value 67C it returns 152.60F
      * @throws IncorrectDegreeFormatException
      */
+    public static String convertAsString(String degreeValue, int precision) throws IncorrectDegreeFormatException {
+        return String.format("%." + precision + "f%c", convertAsDouble(degreeValue),
+                getDegreeLetter(degreeValue) == 'F' ? 'C' : 'F');
+    }
+
     public static String convertAsString(String degreeValue) throws IncorrectDegreeFormatException {
-        return String.format("%.2f%c", convertAsDouble(degreeValue), getDegreeLetter(degreeValue) == 'F' ? 'C' : 'F');
+        return convertAsString(degreeValue, 2);
     }
 
     /**

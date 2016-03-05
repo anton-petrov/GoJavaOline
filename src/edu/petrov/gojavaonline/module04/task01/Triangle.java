@@ -28,7 +28,7 @@ public class Triangle extends Figure {
      * @return triangle square
      */
     @Override
-    public double getSquare() {
+    public double getArea() {
         double perimeter = sideA + sideB + sideC;
         return Math.sqrt(perimeter * (perimeter - sideA) * (perimeter - sideB) * (perimeter - sideC));
     }

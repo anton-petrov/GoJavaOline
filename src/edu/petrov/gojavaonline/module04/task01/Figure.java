@@ -6,5 +6,5 @@ package edu.petrov.gojavaonline.module04.task01;
 public abstract class Figure {
     private int lineWidth;
 
-    public abstract double getSquare();
+    public abstract double getArea();
 }
