@@ -17,28 +17,24 @@ public class TemperatureDegreeConverter {
      * @param degreeValue Degrees value in the following format: [degrees][C|F];
      *                    Examples: 13C, 111F, 36.6c, -5f.
      * @return Converted degrees value as double
-     * @throws IncorrectDegreeFormatException
+     * @throws TempretureDegreeFormatException
      */
-    public static double convertAsDouble(String degreeValue) throws IncorrectDegreeFormatException {
-
+    public static double convertAsDouble(String degreeValue) throws TempretureDegreeFormatException {
         if (degreeValue != null) {
             try {
                 char degreeLetter = getDegreeLetter(degreeValue);
                 double conversionValue = Double.parseDouble(degreeValue.substring(0, degreeValue.length() - 1));
-
                 switch (Character.toUpperCase(degreeLetter)) {
                     case 'C':
-                        conversionValue = convertCelsiusToFahrenheit(conversionValue);
+                        conversionValue = TemperatureDegree.FAHRENHEIT.convertValueFrom(conversionValue);
                         break;
                     case 'F':
-                        conversionValue = convertFahrenheitToCelsius(conversionValue);
+                        conversionValue = TemperatureDegree.CELSIUS.convertValueFrom(conversionValue);
                         break;
                 }
-
                 return conversionValue;
-
-            } catch (Exception e) {
-                throw new IncorrectDegreeFormatException();
+            } catch (NumberFormatException e) {
+                throw new TempretureDegreeFormatException();
             }
         }
         return 0;
@@ -50,14 +46,14 @@ public class TemperatureDegreeConverter {
      * @param degreeValue Degrees value in the following format: [degrees][C|F];
      *                    Examples: 13C, 111F, 36.6c, -5f.
      * @return Converted degrees value as String. For example: for input value 67C it returns 152.60F
-     * @throws IncorrectDegreeFormatException
+     * @throws TempretureDegreeFormatException
      */
-    public static String convertAsString(String degreeValue, int precision) throws IncorrectDegreeFormatException {
+    public static String convertAsString(String degreeValue, int precision) throws TempretureDegreeFormatException {
         return String.format("%." + precision + "f%c", convertAsDouble(degreeValue),
                 getDegreeLetter(degreeValue) == 'F' ? 'C' : 'F');
     }
 
-    public static String convertAsString(String degreeValue) throws IncorrectDegreeFormatException {
+    public static String convertAsString(String degreeValue) throws TempretureDegreeFormatException {
         return convertAsString(degreeValue, 2);
     }
 
@@ -67,31 +63,33 @@ public class TemperatureDegreeConverter {
      * @param value degrees in Fahrenheit
      * @return value in deg. Celsius
      */
+    @Deprecated
     public static double convertFahrenheitToCelsius(double value) {
         return TemperatureDegree.CELSIUS.convertValueFrom(value);
     }
 
     /**
      * Convert degree value from Celsius to Fahrenheit
+     *
      * @param value degrees in Celsius
      * @return value in deg. Fahrenheit
      */
+    @Deprecated
     public static double convertCelsiusToFahrenheit(double value) {
         return TemperatureDegree.FAHRENHEIT.convertValueFrom(value);
     }
 
     /**
-     *
      * @param degreeValue
      * @return Letter C(elsius) or letter F(ahrenheit)
-     * @throws IncorrectDegreeFormatException
+     * @throws TempretureDegreeFormatException
      */
-    private static char getDegreeLetter(String degreeValue) throws IncorrectDegreeFormatException {
+    private static char getDegreeLetter(String degreeValue) throws TempretureDegreeFormatException {
         if (degreeValue == null || degreeValue.length() < 2)
-            throw new IncorrectDegreeFormatException();
+            throw new TempretureDegreeFormatException();
         char degreeLetter = Character.toUpperCase(degreeValue.charAt(degreeValue.length() - 1));
         if (degreeLetter != 'F' && degreeLetter != 'C')
-            throw new IncorrectDegreeFormatException();
+            throw new TempretureDegreeFormatException();
         return degreeLetter;
     }
 
