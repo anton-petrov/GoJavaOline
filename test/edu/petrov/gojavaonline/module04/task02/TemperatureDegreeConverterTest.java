@@ -1,5 +1,7 @@
 package edu.petrov.gojavaonline.module04.task02;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertArrayEquals;
@@ -9,6 +11,15 @@ import static org.junit.Assert.assertEquals;
  * Created by anton on 04/03/16.
  */
 public class TemperatureDegreeConverterTest {
+    @Before
+    public void Before() {
+
+    }
+
+    @After
+    public void After() {
+
+    }
 
     @Test
     public void testConvertAsDouble() throws Exception {

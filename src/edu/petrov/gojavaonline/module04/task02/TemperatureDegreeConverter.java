@@ -19,23 +19,19 @@ public class TemperatureDegreeConverter {
      * @return Converted degrees value as double
      * @throws TemperatureDegreeFormatException
      */
-    public static double convertAsDouble(String degreeValue) throws TemperatureDegreeFormatException {
+    public static double convertAsDouble(String degreeValue) throws TemperatureDegreeFormatException, NumberFormatException {
         if (degreeValue != null) {
-            try {
-                char degreeLetter = getDegreeLetter(degreeValue);
-                double conversionValue = Double.parseDouble(degreeValue.substring(0, degreeValue.length() - 1));
-                switch (Character.toUpperCase(degreeLetter)) {
-                    case 'C':
-                        conversionValue = TemperatureDegree.FAHRENHEIT.convertValueFrom(conversionValue);
-                        break;
-                    case 'F':
-                        conversionValue = TemperatureDegree.CELSIUS.convertValueFrom(conversionValue);
-                        break;
-                }
-                return conversionValue;
-            } catch (NumberFormatException e) {
-                throw new TemperatureDegreeFormatException();
+            char degreeLetter = getDegreeLetter(degreeValue);
+            double conversionValue = Double.parseDouble(degreeValue.substring(0, degreeValue.length() - 1));
+            switch (Character.toUpperCase(degreeLetter)) {
+                case 'C':
+                    conversionValue = TemperatureDegree.FAHRENHEIT.convertValueFrom(conversionValue);
+                    break;
+                case 'F':
+                    conversionValue = TemperatureDegree.CELSIUS.convertValueFrom(conversionValue);
+                    break;
             }
+            return conversionValue;
         }
         return 0;
     }
