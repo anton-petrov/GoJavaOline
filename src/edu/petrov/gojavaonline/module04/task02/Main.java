@@ -27,7 +27,7 @@ public class Main {
 
                 System.out.format("%s = %s\n", degreeValue.toUpperCase(), TemperatureDegreeConverter.convertAsString(degreeValue));
 
-            } catch (TempretureDegreeFormatException e) {
+            } catch (TemperatureDegreeFormatException e) {
                 System.out.println(CONVERSION_ERROR_MESSAGE);
             }
 

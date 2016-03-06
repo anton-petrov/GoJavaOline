@@ -17,9 +17,9 @@ public class TemperatureDegreeConverter {
      * @param degreeValue Degrees value in the following format: [degrees][C|F];
      *                    Examples: 13C, 111F, 36.6c, -5f.
      * @return Converted degrees value as double
-     * @throws TempretureDegreeFormatException
+     * @throws TemperatureDegreeFormatException
      */
-    public static double convertAsDouble(String degreeValue) throws TempretureDegreeFormatException {
+    public static double convertAsDouble(String degreeValue) throws TemperatureDegreeFormatException {
         if (degreeValue != null) {
             try {
                 char degreeLetter = getDegreeLetter(degreeValue);
@@ -34,7 +34,7 @@ public class TemperatureDegreeConverter {
                 }
                 return conversionValue;
             } catch (NumberFormatException e) {
-                throw new TempretureDegreeFormatException();
+                throw new TemperatureDegreeFormatException();
             }
         }
         return 0;
@@ -46,14 +46,14 @@ public class TemperatureDegreeConverter {
      * @param degreeValue Degrees value in the following format: [degrees][C|F];
      *                    Examples: 13C, 111F, 36.6c, -5f.
      * @return Converted degrees value as String. For example: for input value 67C it returns 152.60F
-     * @throws TempretureDegreeFormatException
+     * @throws TemperatureDegreeFormatException
      */
-    public static String convertAsString(String degreeValue, int precision) throws TempretureDegreeFormatException {
+    public static String convertAsString(String degreeValue, int precision) throws TemperatureDegreeFormatException {
         return String.format("%." + precision + "f%c", convertAsDouble(degreeValue),
                 getDegreeLetter(degreeValue) == 'F' ? 'C' : 'F');
     }
 
-    public static String convertAsString(String degreeValue) throws TempretureDegreeFormatException {
+    public static String convertAsString(String degreeValue) throws TemperatureDegreeFormatException {
         return convertAsString(degreeValue, 2);
     }
 
@@ -82,15 +82,15 @@ public class TemperatureDegreeConverter {
     /**
      * @param degreeValue
      * @return Letter C(elsius) or letter F(ahrenheit)
-     * @throws TempretureDegreeFormatException
+     * @throws TemperatureDegreeFormatException
      */
-    private static char getDegreeLetter(String degreeValue) throws TempretureDegreeFormatException {
+    private static char getDegreeLetter(String degreeValue) throws TemperatureDegreeFormatException {
         if (degreeValue == null || degreeValue.length() < 2) {
-            throw new TempretureDegreeFormatException();
+            throw new TemperatureDegreeFormatException();
         }
         char degreeLetter = Character.toUpperCase(degreeValue.charAt(degreeValue.length() - 1));
         if (degreeLetter != 'F' && degreeLetter != 'C') {
-            throw new TempretureDegreeFormatException();
+            throw new TemperatureDegreeFormatException();
         }
         return degreeLetter;
     }
