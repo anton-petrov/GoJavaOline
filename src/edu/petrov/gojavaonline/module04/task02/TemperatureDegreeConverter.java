@@ -85,11 +85,13 @@ public class TemperatureDegreeConverter {
      * @throws TempretureDegreeFormatException
      */
     private static char getDegreeLetter(String degreeValue) throws TempretureDegreeFormatException {
-        if (degreeValue == null || degreeValue.length() < 2)
+        if (degreeValue == null || degreeValue.length() < 2) {
             throw new TempretureDegreeFormatException();
+        }
         char degreeLetter = Character.toUpperCase(degreeValue.charAt(degreeValue.length() - 1));
-        if (degreeLetter != 'F' && degreeLetter != 'C')
+        if (degreeLetter != 'F' && degreeLetter != 'C') {
             throw new TempretureDegreeFormatException();
+        }
         return degreeLetter;
     }
 

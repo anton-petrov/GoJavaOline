@@ -23,8 +23,7 @@ public class Main {
                 System.out.print("> ");
                 degreeValue = scanner.nextLine().toLowerCase();
 
-                if (degreeValue.equals("q") || degreeValue.equals("quit"))
-                    break;
+                if (degreeValue.equals("q") || degreeValue.equals("quit")) break;
 
                 System.out.format("%s = %s\n", degreeValue.toUpperCase(), TemperatureDegreeConverter.convertAsString(degreeValue));
 
