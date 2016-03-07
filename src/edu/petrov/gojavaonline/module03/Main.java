@@ -6,6 +6,7 @@ import edu.petrov.gojavaonline.module03.filesystem.ImageFile;
 import edu.petrov.gojavaonline.module03.filesystem.TextFile;
 
 /**
+ * TODO: write simple command line
  * Created by anton on 06/03/16.
  */
 public class Main {

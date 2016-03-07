@@ -10,14 +10,9 @@ public class MusicShop {
     int funds;
     int currentId;
 
-    public void add(String productName, int price) {
-        switch (productName.toLowerCase()) {
-            case "guitar":
-                goods.put(currentId++, new Guitar(price));
-            case "piano":
-                goods.put(currentId++, new Piano(price));
-            case "trumpet":
-                goods.put(currentId++, new Trumpet(price));
+    public void add(Product product) {
+        if (product != null) {
+            goods.put(currentId++, product);
         }
     }
 
