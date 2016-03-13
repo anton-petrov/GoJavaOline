@@ -14,6 +14,7 @@ public class Main {
         Directory base = FileSystem.createDirectory("C:/petrov", "base");
         base.createFile("file1");
         base.createFile("file2");
+        base.createFile("file2");
         base.createFile(new TextFile("mytext.txt"));
 
         ImageFile imgFile = new ImageFile("image1.jpg");
