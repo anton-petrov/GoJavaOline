@@ -9,9 +9,9 @@ import java.util.Map;
  * Created by anton on 06/03/16.
  */
 public class Directory implements FileSystemObject {
+    HashMap<String, FileSystemObject> files = new HashMap();
     private String path;
     private String name;
-    HashMap<String, FileSystemObject> files = new HashMap();
 
     Directory() {
     }
@@ -19,6 +19,22 @@ public class Directory implements FileSystemObject {
     Directory(String path, String name) {
         this.path = path;
         this.name = name;
+    }
+
+    private static String shiftStringRight(String string, int shift, String symbol) {
+        StringBuilder result = new StringBuilder();
+        for (int i = 0; i < shift; i++) result.append(symbol);
+        return result.append(string).toString();
+    }
+
+    private static void printRecursively(Directory dir, int level) {
+        List<FileSystemObject> currentFilesList = dir.getFilesList();
+        for (FileSystemObject o : currentFilesList) {
+            System.out.println(shiftStringRight("[" + o.name() + "]", level, "  "));
+            if (o.isDirectory()) {
+                printRecursively((Directory) o, level + 1);
+            }
+        }
     }
 
     public File createFile(String name) {
@@ -73,20 +89,9 @@ public class Directory implements FileSystemObject {
         }
     }
 
-    private static String shiftStringRight(String string, int shift, String symbol) {
-        StringBuilder result = new StringBuilder();
-        for (int i = 0; i < shift; i++) result.append(symbol);
-        return result.append(string).toString();
-    }
-
-    private static void printRecursively(Directory dir, int level) {
-        List<FileSystemObject> currentFilesList = dir.getFilesList();
-        for (FileSystemObject o : currentFilesList) {
-            System.out.println(shiftStringRight("[" + o.name() + "]", level, "  "));
-            if (o.isDirectory()) {
-                printRecursively((Directory) o, level + 1);
-            }
-        }
+    public void print() {
+        Object[] fileArray = files.values().toArray();
+        //ArrayUtils.insertionSort(fileArray);
     }
 
     public FileSystemObject deleteFile(String name) {

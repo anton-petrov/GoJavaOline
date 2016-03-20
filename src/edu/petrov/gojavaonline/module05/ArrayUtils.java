@@ -78,6 +78,15 @@ public class ArrayUtils {
         }
     }
 
+    public static <T> void insertionSort(Comparable[] array) {
+        int N = array.length;
+        for (int i = 1; i < N; i++) {
+            for (int j = i; j > 0 && array[j].compareTo(array[j - 1]) < 0; j--) {
+                swap(array, j, j - 1);
+            }
+        }
+    }
+
     private static <T> void swap(T[] array, int i, int j) {
         T t = array[i];
         array[i] = array[j];

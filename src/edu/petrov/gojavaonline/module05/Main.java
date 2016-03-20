@@ -16,6 +16,7 @@ class InternetDownloader {
 
 public class Main {
     public static void main(String[] args) {
+
         Integer[] test = {1,3,-7,0,189,3,300};
         Integer a = ArrayUtils.findMax(test);
 
