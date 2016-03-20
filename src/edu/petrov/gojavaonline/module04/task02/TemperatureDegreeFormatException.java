@@ -3,15 +3,14 @@ package edu.petrov.gojavaonline.module04.task02;
 /**
  * Created by anton on 04/03/16.
  */
-public class TemperatureDegreeFormatException extends Exception {
+class TemperatureDegreeFormatException extends IllegalArgumentException {
     private String degreeValue;
 
-    public TemperatureDegreeFormatException(String degreeValue) {
+    TemperatureDegreeFormatException(String degreeValue) {
         this.degreeValue = degreeValue;
     }
 
-    public String getDegreeValue() {
-
+    String getDegreeValue() {
         return degreeValue;
     }
 }

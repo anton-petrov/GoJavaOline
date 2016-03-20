@@ -8,8 +8,8 @@ import java.util.Map;
 /**
  * Created by anton on 06/03/16.
  */
-public class Directory implements FileSystemObject {
-    HashMap<String, FileSystemObject> files = new HashMap();
+public class Directory implements FileSystemObject, Comparable {
+    private final HashMap<String, FileSystemObject> files = new HashMap<>();
     private String path;
     private String name;
 
@@ -120,5 +120,10 @@ public class Directory implements FileSystemObject {
     @Override
     public boolean isDirectory() {
         return true;
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        return name.compareTo(((Directory) o).name);
     }
 }
