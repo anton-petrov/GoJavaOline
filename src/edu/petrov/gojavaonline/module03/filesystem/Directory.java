@@ -59,7 +59,7 @@ public class Directory implements FileSystemObject, Comparable {
         return dir;
     }
 
-    FileSystemObject addFileSystemObject(FileSystemObject fileSystemObject) {
+    private FileSystemObject addFileSystemObject(FileSystemObject fileSystemObject) {
         if (fileSystemObject == null) return null;
         return files.put(fileSystemObject.name(), fileSystemObject);
     }
