@@ -1,5 +1,7 @@
 package edu.petrov.gojavaonline.module03.filesystem;
 
+import java.util.regex.Pattern;
+
 /**
  * Created by anton on 06/03/16.
  */
@@ -25,7 +27,7 @@ public class File implements FileSystemObject, Comparable {
     }
 
     public String getExtension() {
-        String[] filename = name.split(".");
+        String[] filename = name.split(Pattern.quote("."));
         if (filename.length > 1) {
             return filename[filename.length - 1];
         }
@@ -66,11 +68,12 @@ public class File implements FileSystemObject, Comparable {
 
     @Override
     public String toString() {
-        return name;
+        return String.format("%s %s %d %s", name(), getPath(), size(), getExtension());
     }
 
     @Override
     public int compareTo(Object o) {
-        return name.compareTo(((File) o).name);
+        return name.compareTo(((FileSystemObject) o).name());
     }
+
 }

@@ -30,5 +30,7 @@ public class Main {
         base.createDirectory("dir1").createDirectory("dir2").createFile("file3");
 
         base.print(true);
+
+        base.print();
     }
 }

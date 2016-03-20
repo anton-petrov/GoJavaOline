@@ -16,19 +16,23 @@ public class TextFile extends File {
     }
 
     public String getText() {
-        return new String(getData());
-    }
-
-    public void printText() {
-        System.out.println(getText());
+        if (data != null)
+            return new String(getData());
+        else
+            return "";
     }
 
     public void setText(String text) {
         data = text.getBytes(Charset.forName("UTF-8"));
     }
 
+    public void printText() {
+        System.out.println(getText());
+    }
+
     @Override
     public long size() {
-        return getText().length();
+        String text = getText();
+        return text != null ? text.length() : 0;
     }
 }

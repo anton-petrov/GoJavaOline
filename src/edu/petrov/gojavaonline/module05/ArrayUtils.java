@@ -78,13 +78,21 @@ public class ArrayUtils {
         }
     }
 
-    public static <T> void insertionSort(Comparable[] array) {
+    public static void insertionSort(Comparable[] array) {
+        insertionSort(array, true);
+    }
+
+    public static void insertionSort(Comparable[] array, boolean ascending) {
         int N = array.length;
         for (int i = 1; i < N; i++) {
-            for (int j = i; j > 0 && array[j].compareTo(array[j - 1]) < 0; j--) {
+            for (int j = i; j > 0 && less(array, j, j - 1) == ascending; j--) {
                 swap(array, j, j - 1);
             }
         }
+    }
+
+    private static <T extends Comparable> boolean less(T[] array, int i, int j) {
+        return array[i].compareTo(array[j]) < 0;
     }
 
     private static <T> void swap(T[] array, int i, int j) {
