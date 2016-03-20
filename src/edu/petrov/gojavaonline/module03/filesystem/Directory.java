@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 /**
  * Created by anton on 06/03/16.
  */
@@ -36,11 +37,6 @@ public class Directory implements FileSystemObject, Comparable {
                 printRecursively((Directory) o, level + 1);
             }
         }
-    }
-
-    @Override
-    public String toString() {
-        return String.format("%s %s %d", name(), getPath(), size());
     }
 
     public File createFile(String name) {
@@ -138,5 +134,10 @@ public class Directory implements FileSystemObject, Comparable {
     @Override
     public int compareTo(Object o) {
         return name.compareTo(((FileSystemObject) o).name());
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s %s %d", name(), getPath(), size());
     }
 }
