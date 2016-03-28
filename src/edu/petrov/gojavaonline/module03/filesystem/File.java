@@ -68,7 +68,7 @@ public class File implements FileSystemObject, Comparable {
 
     @Override
     public String toString() {
-        return String.format("%s %s %d %s", name(), getPath(), size(), getExtension());
+        return String.format("name=%-32s\tpath=%-32s\tsize=%-6d\textension=%s", name(), getPath(), size(), getExtension());
     }
 
     @Override

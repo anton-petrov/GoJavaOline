@@ -138,6 +138,6 @@ public class Directory implements FileSystemObject, Comparable {
 
     @Override
     public String toString() {
-        return String.format("%s %s %d", name(), getPath(), size());
+        return String.format("name=%-32s\tpath=%-32s\tsize=%-6d\tdir", name(), getPath(), size());
     }
 }

@@ -16,11 +16,11 @@ public class Main {
 }
 
 class MyData implements Observable {
-    Object[] data;
+    private Object[] data;
     private List<Observer> observers;
 
     public MyData() {
-        observers = new ArrayList<Observer>();
+        observers = new ArrayList<>();
     }
 
     @Override
