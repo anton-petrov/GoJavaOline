@@ -23,7 +23,7 @@ public class CaesarCipher {
     }
 
     public static char shift(char c, int key) {
-        return (char) (((int) c + key + (int) Character.MAX_VALUE) % (int) Character.MAX_VALUE);
+        return (char) ((c + key + (int) Character.MAX_VALUE) % (int) Character.MAX_VALUE);
     }
 
 }
