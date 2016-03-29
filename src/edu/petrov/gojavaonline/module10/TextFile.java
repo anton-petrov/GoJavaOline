@@ -12,7 +12,7 @@ class TextFile {
         if(fileName == null || text == null)
             return;
         File file = new File(fileName);
-        try(FileWriter writer = new FileWriter(file, append)) {
+        try(final FileWriter writer = new FileWriter(file, append)) {
             writer.write(text);
             writer.flush();
         }
@@ -23,7 +23,7 @@ class TextFile {
             return null;
         File file = new File(fileName);
         char[] buffer = new char[0];
-        try(FileReader reader = new FileReader(file))
+        try(final FileReader reader = new FileReader(file))
         {
             buffer = new char[(int)file.length()];
             reader.read(buffer);
