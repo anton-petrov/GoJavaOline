@@ -16,14 +16,6 @@ class TextFile {
             writer.write(text);
             writer.flush();
         }
-        catch (FileNotFoundException e) {
-            System.out.println(e.getMessage());
-            throw new FileNotFoundException();
-        }
-        catch (IOException e) {
-            System.out.println(e.getMessage());
-            throw new IOException(e);
-        }
     }
 
     public static String Read(String fileName) throws IOException {
@@ -35,13 +27,6 @@ class TextFile {
         {
             buffer = new char[(int)file.length()];
             reader.read(buffer);
-        }
-        catch (FileNotFoundException e) {
-            System.out.println(e.getMessage());
-            throw new FileNotFoundException();
-        }
-        catch(IOException e){
-            System.out.println(e.getMessage());
         }
         return new String(buffer);
     }
