@@ -10,7 +10,7 @@ public class Main {
     public static void main(String[] args) {
         final int mySuperSecretKey = 5;
         System.out.println(CaesarCipher.shift(CaesarCipher.shift('A', 3), -3));
-        String plainText = "This is text!";
+        String plainText = "This is a text!";
         String cipherText = CaesarCipher.crypt(plainText, mySuperSecretKey);
         plainText = CaesarCipher.decrypt(cipherText, mySuperSecretKey);
 
