@@ -10,56 +10,12 @@ import java.io.*;
  * Предусмотреть обработку различных ошибок ввода/вывода.
  */
 
-class TextFile {
-
-    public static void Write(String fileName, String text, boolean append) throws IOException {
-        if(fileName == null || text == null)
-            return;
-        File file = new File(fileName);
-        try(FileWriter writer = new FileWriter(file, append)) {
-            writer.write(text);
-            writer.flush();
-        }
-        catch (FileNotFoundException e) {
-            System.out.println(e.getMessage());
-            throw new FileNotFoundException();
-        }
-        catch (IOException e) {
-            System.out.println(e.getMessage());
-            throw new IOException(e);
-        }
-    }
-
-    public static String Read(String fileName) throws IOException {
-        if(fileName == null)
-            return null;
-        File file = new File(fileName);
-        char[] buffer = new char[0];
-        try(FileReader reader = new FileReader(file))
-        {
-            buffer = new char[(int)file.length()];
-            reader.read(buffer);
-        }
-        catch (FileNotFoundException e) {
-            System.out.println(e.getMessage());
-            throw new FileNotFoundException();
-        }
-        catch(IOException e){
-            System.out.println(e.getMessage());
-        }
-        return new String(buffer);
-    }
-
-}
-
 /**
  *  Example
  *  -------
  *  Encrypt and write to file : java Main --key 3 --message "Some text" --file "text.txt"
  *  Read from file and decrypt : java Main --file "text.txt" --key 3
  */
-
-
 public class Main {
     public static void main(String[] args) {
         String file = "";
