@@ -48,7 +48,6 @@ public class TextFileTest {
         }
     }
 
-//    @Ignore("Not ready")
     @Test
     public void testWriteRead() throws Exception {
         TextFile.Write(writeFileName, textToWrite, false);
@@ -56,7 +55,6 @@ public class TextFileTest {
         assertEquals(textToWrite, readText);
     }
 
-    //    @Ignore("Not ready")
     @Test
     public void testRead() throws Exception {
         File tmpFile = folder.newFile(readFileName);

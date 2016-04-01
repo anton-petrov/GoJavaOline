@@ -1,30 +1,33 @@
 package edu.petrov.gojavaonline.module05;
 
 import org.junit.*;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 
-import java.lang.reflect.Array;
 import java.util.Arrays;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
-/**
- * Created by anton on 01/04/16.
- */
 public class ArrayUtilsTest {
 
+    private final Integer[] sortedArray1 = {-5, 0, 1, 2, 2, 3, 7, 11, 25, 100};
+    private final Integer[] sortedArray2 = {-1, -1, 0, 0, 1, 1, 2, 2, 3, 10000};
     private Integer[] unsortedArray1Copy;
     private Integer[] unsortedArray1 = {3, 1, 2, 2, 100, -5, 7, 0, 11, 25};
-    private final Integer[] sortedArray1 = {-5, 0, 1, 2, 2, 3, 7, 11, 25, 100};
-
     private Integer[] unsortedArray2Copy;
     private Integer[] unsortedArray2 = {0, 1, 2, 3, 2, 1, 0, -1, -1, 10000};
-    private final Integer[] sortedArray2 = {-1, -1, 0, 0, 1, 1, 2, 2, 3, 10000};
-
     private Integer[] unsortedArray3Copy;
     private Integer[] unsortedArray3 = {9, 8, 7, 6, 5, 4, 3, 2, 1, 0};
     private Integer[] sortedArray3 = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+
+    @AfterClass
+    public static void AfterClass() {
+
+    }
+
+    @BeforeClass
+    public static void BeforeClass() {
+
+    }
 
     @Before
     public void Before() {
@@ -41,16 +44,6 @@ public class ArrayUtilsTest {
         unsortedArray1 = Arrays.copyOf(unsortedArray1Copy, unsortedArray1Copy.length);
         unsortedArray2 = Arrays.copyOf(unsortedArray2Copy, unsortedArray2Copy.length);
         unsortedArray3 = Arrays.copyOf(unsortedArray3Copy, unsortedArray3Copy.length);
-    }
-
-    @AfterClass
-    public static void AfterClass() {
-
-    }
-
-    @BeforeClass
-    public static void BeforeClass() {
-
     }
 
     @Test(timeout = 100)
