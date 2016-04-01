@@ -7,13 +7,6 @@ import java.util.Arrays;
  * Created by anton on 11/03/16.
  */
 
-class InternetDownloader {
-
-    public static byte[] getSite(String url) throws IOException {
-        return new String("<html><body>Nothing! It's stub!</body></html>").getBytes();
-    }
-}
-
 public class Main {
     public static void main(String[] args) {
 

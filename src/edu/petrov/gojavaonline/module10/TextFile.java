@@ -10,7 +10,7 @@ class TextFile {
 
     public static void Write(String fileName, String text, boolean append) throws IOException {
         if(fileName == null || text == null)
-            return;
+            throw new IOException();
         File file = new File(fileName);
         try(final FileWriter writer = new FileWriter(file, append)) {
             writer.write(text);
@@ -20,7 +20,7 @@ class TextFile {
 
     public static String Read(String fileName) throws IOException {
         if(fileName == null)
-            return null;
+            throw new IOException();
         File file = new File(fileName);
         char[] buffer = new char[0];
         try(final FileReader reader = new FileReader(file))
