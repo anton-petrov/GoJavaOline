@@ -1,5 +1,9 @@
 package edu.petrov.gojavaonline.module999;
 
+import org.msgpack.core.MessageBufferPacker;
+import org.msgpack.core.MessagePack;
+import org.msgpack.core.MessageUnpacker;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,9 +13,56 @@ import java.util.List;
 /**
  * Created by anton on 30/03/16.
  */
-public class Serialization {
+public final class Serialization {
 
-    public static void Run() throws Exception {
+    private Serialization() {
+    }
+
+    private static String join(String[] in) {
+        StringBuilder s = new StringBuilder();
+        for (int i = 0; i < in.length; ++i) {
+            if (i > 0) {
+                s.append(", ");
+            }
+            s.append(in[i]);
+        }
+        return s.toString();
+    }
+
+    public static void messagePackBasicUsage() throws IOException {
+        MessageBufferPacker packer = MessagePack.newDefaultBufferPacker();
+
+        // pack binary data
+        //byte[] ba = new byte[] {1, 2, 3, 4};
+        //packer.packBinaryHeader(ba.length);
+        //packer.writePayload(ba);
+
+        packer
+                .packInt(1)
+                .packString("leo")
+                .packArrayHeader(2)
+                .packString("xxx-xxxx")
+                .packString("yyy-yyyy");
+        packer.close();
+
+        MessageUnpacker unpacker = MessagePack.newDefaultUnpacker(packer.toByteArray());
+
+        //unpacker.unpackBinaryHeader();
+        //unpacker.readPayload(ba);
+
+        int id = unpacker.unpackInt();
+        String name = unpacker.unpackString();
+        int numPhones = unpacker.unpackArrayHeader();
+        String[] phones = new String[numPhones];
+        for (int i = 0; i < numPhones; ++i) {
+            phones[i] = unpacker.unpackString();
+        }
+        unpacker.close();
+
+        System.out.println(String.format("id:%d, name:%s, phone:[%s]", id, name, join(phones)));
+    }
+
+    public static void classicBinarySerialization() throws Exception {
         RandomClass rc1 = new RandomClass();
         RandomClass rc2 = new RandomClass();
         Date now = new Date(System.currentTimeMillis());
