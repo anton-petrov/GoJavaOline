@@ -13,6 +13,8 @@ public class BigInteger {
 
     private List<Integer> digits = new ArrayList<>();
 
+    private int sign = 0;
+
     public BigInteger() {
     }
 
@@ -32,7 +34,7 @@ public class BigInteger {
      */
     public static BigInteger parseBigInteger(String stringValue) {
         BigInteger result = new BigInteger();
-        int k = 0;
+        int k = stringValue.length();
         for (int i = stringValue.length(); i >= BASE_LENGTH; i -= BASE_LENGTH, k = i) {
             result.digits.add(Integer.parseInt(stringValue.substring(i - BASE_LENGTH, i)));
         }
@@ -71,6 +73,28 @@ public class BigInteger {
                 sum -= BASE;
 
             result.add(sum);
+        }
+
+        digits = result;
+        return this;
+    }
+
+    public BigInteger subtract(BigInteger a) {
+        int carry = 0;
+        final List<Integer> result = new ArrayList<>();
+        for (int i = 0; i < this.size() || carry == 1; i++) {
+
+            int diff = -carry;
+            carry = 0;
+
+            diff -= i < a.size() ? a.digits.get(i) : 0;
+            diff += i < this.size() ? this.digits.get(i) : 0;
+
+            if (diff < 0) {
+                carry = 1;
+                diff += BASE;
+            }
+            result.add(diff);
         }
 
         digits = result;
