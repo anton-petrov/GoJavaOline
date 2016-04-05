@@ -1,7 +1,7 @@
 <component name="libraryTable">
-  <library name="postgresql-9.4.1208">
+  <library name="guava-19.0">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/lib/postgresql-9.4.1208.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/guava-19.0.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

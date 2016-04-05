@@ -1,5 +1,8 @@
 package edu.petrov.gojavaonline.module999;
 
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.msgpack.core.MessageBufferPacker;
 import org.msgpack.core.MessagePack;
 import org.msgpack.core.MessageUnpacker;
@@ -27,6 +30,33 @@ public final class Serialization {
             s.append(in[i]);
         }
         return s.toString();
+    }
+
+    public static void jacksonUsage() {
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            // Convert object to JSON string and save into a file directly
+            Staff staff = new Staff("anton", 31, "programmer");
+            mapper.writeValue(new File("staff.json"), staff);
+
+            // Convert object to JSON string
+            String jsonInString = mapper.writeValueAsString(staff);
+            System.out.println(jsonInString);
+
+            // Convert object to JSON string and pretty print
+            jsonInString = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(staff);
+            System.out.println(jsonInString);
+
+            final Staff staff1 = mapper.readValue(jsonInString, Staff.class);
+            System.out.println(staff1);
+
+        } catch (JsonGenerationException e) {
+            e.printStackTrace();
+        } catch (JsonMappingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void messagePackBasicUsage() throws IOException {

@@ -13,6 +13,8 @@
     <orderEntry type="library" name="postgresql-9.4.1208" level="project" />
     <orderEntry type="library" name="msgpack-core-0.8.5" level="project" />
     <orderEntry type="library" name="guava-19.0" level="project" />
+    <orderEntry type="library" name="jackson-databind-2.7.3" level="project" />
+    <orderEntry type="library" name="jackson-core-2.7.3" level="project" />
   </component>
   <component name="org.twodividedbyzero.idea.findbugs">
     <option name="_basePreferences">
