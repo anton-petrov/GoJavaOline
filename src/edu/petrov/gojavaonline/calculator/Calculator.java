@@ -5,7 +5,9 @@ package edu.petrov.gojavaonline.calculator;
  */
 public class Calculator {
     public static void main(String[] args) {
-        BigInteger bigInteger = BigInteger.parseBigInteger("1234567890");
-        System.out.println(bigInteger);
+        BigInteger a = BigInteger.parseBigInteger("999999999999999");
+        BigInteger b = BigInteger.parseBigInteger("999999999999999");
+
+        System.out.println(b.add(a));
     }
 }

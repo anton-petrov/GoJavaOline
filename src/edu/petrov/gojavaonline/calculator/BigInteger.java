@@ -13,14 +13,23 @@ public class BigInteger {
 
     private List<Integer> digits = new ArrayList<>();
 
-
     public BigInteger() {
     }
+
 
     public BigInteger(String stringValue) {
         parse(stringValue);
     }
 
+    /**
+     * Пример:
+     * Входная строка "123456789987654321" будет преобразована в массив 0->987654321, 1->123456789
+     * Таким образом, младшие разряды идут слева направо. В каждом елементе хранится один разряд по основанию
+     * миллирад, максимально содержащий 9 десятичных знаков.
+     *
+     * @param stringValue
+     * @return Большое целое число
+     */
     public static BigInteger parseBigInteger(String stringValue) {
         BigInteger result = new BigInteger();
         int k = 0;
@@ -28,7 +37,44 @@ public class BigInteger {
             result.digits.add(Integer.parseInt(stringValue.substring(i - BASE_LENGTH, i)));
         }
         result.digits.add(Integer.parseInt(stringValue.substring(0, k)));
+
+        // remove leading zeroes
+        for (int i = 0; i < result.digits.size() - 1; i++) {
+            if (result.digits.get(i) == 0) {
+                result.digits.remove(0);
+            }
+        }
+
         return result;
+    }
+
+    private int size() {
+        return digits.size();
+    }
+
+    public BigInteger add(BigInteger a) {
+        int carry = -1;
+        final List<Integer> result = new ArrayList<>();
+        for (int i = 0; i < Math.max(this.size(), a.size()) || carry >= 0; i++) {
+            int sum = 0;
+
+            if (carry >= 0) {
+                sum += 1;
+            }
+
+            sum += i < a.size() ? a.digits.get(i) : 0;
+            sum += i < this.size() ? this.digits.get(i) : 0;
+
+            carry = sum - BASE;
+
+            if (carry >= 0)
+                sum -= BASE;
+
+            result.add(sum);
+        }
+
+        digits = result;
+        return this;
     }
 
     public BigInteger parse(String stringValue) {
