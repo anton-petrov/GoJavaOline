@@ -250,7 +250,7 @@ public class BigInteger implements Comparable<BigInteger> {
     }
 
     /**
-     * Fast divide algorithm
+     * Fast Knuth divide algorithm
      */
     public BigInteger divide(BigInteger divider) {
 
@@ -272,7 +272,7 @@ public class BigInteger implements Comparable<BigInteger> {
         int d = (BASE / (v.getDigit(n - 1) + 1));
         u = u.multiply(d);
         v = v.multiply(d);
-        if (u.size() == n + m) //аккуратная проверка на d == 1
+        if (u.size() == n + m)
         {
             u.addDigit(0);
         }
@@ -281,24 +281,24 @@ public class BigInteger implements Comparable<BigInteger> {
 
         while (j >= 0) {
             long cur = (long) (u.getDigit(j + n)) * (long) (BASE) + u.getDigit(j + n - 1);
-            int tempq = (int) (cur / v.getDigit(n - 1));
-            int tempr = (int) (cur % v.getDigit(n - 1));
+            int Q = (int) (cur / v.getDigit(n - 1));
+            int R = (int) (cur % v.getDigit(n - 1));
             do {
-                if (tempq == BASE ||
-                        (long) tempq * (long) v.getDigit(n - 2) > (long) BASE * (long) tempr + u.getDigit(j + n - 2)) {
-                    tempq--;
-                    tempr += v.getDigit(n - 1);
+                if (Q == BASE ||
+                        (long) Q * (long) v.getDigit(n - 2) > (long) BASE * (long) R + u.getDigit(j + n - 2)) {
+                    Q--;
+                    R += v.getDigit(n - 1);
                 } else {
                     break;
                 }
-            } while (tempr < BASE);
+            } while (R < BASE);
             BigInteger u2 = new BigInteger(u.digits.subList(j, j + n + 1));
-            u2 = u2.subtract(v.multiply(tempq));
+            u2 = u2.subtract(v.multiply(Q));
             boolean flag = false;
-            if (u2.getSign() == Sign.NEGATIVE) //если отрицательные
+            if (u2.getSign() == Sign.NEGATIVE)
             {
                 flag = true;
-                List<Integer> bn = new ArrayList<Integer>();
+                List<Integer> bn = new ArrayList<>();
                 for (int i = 0; i <= n; i++) {
                     bn.add(0);
                 }
@@ -306,7 +306,7 @@ public class BigInteger implements Comparable<BigInteger> {
                 u2.setSign(Sign.POSITIVE);
                 u2 = new BigInteger(bn).subtract(u2);
             }
-            q.setDigit(j, tempq);
+            q.setDigit(j, Q);
             if (flag) {
                 q.setDigit(j, q.getDigit(j) - 1);
                 u2 = u2.add(v);
@@ -325,6 +325,8 @@ public class BigInteger implements Comparable<BigInteger> {
 
         }
         removeLeadingZeroes(q.digits);
+        // remainder, don't need at this time
+        r = new BigInteger(u.digits.subList(0, u.size() - 1)).divide(d);
         return q;
     }
 
