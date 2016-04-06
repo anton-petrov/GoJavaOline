@@ -1,7 +1,5 @@
 package edu.petrov.gojavaonline.calculator;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,13 +13,31 @@ public class BigInteger implements Comparable<BigInteger> {
     private static int BASE_LENGTH = STRING_BASE_VALUE.length() - 1;
     private List<Integer> digits = new ArrayList<>();
     private Sign sign = Sign.POSITIVE;
+
     public BigInteger() {
-        //digits.add(0);
-        //System.out.println("BigInteger()");
+
     }
+
     public BigInteger(String stringValue) {
-        //System.out.println("BigInteger(String)");
         parse(stringValue);
+    }
+
+    public BigInteger(int intValue) {
+        parse(String.valueOf(intValue));
+    }
+
+    public BigInteger(BigInteger bigInteger) {
+        assign(bigInteger);
+    }
+
+    public BigInteger(List<Integer> integerList) {
+        digits.addAll(integerList);
+    }
+
+    private BigInteger(int[] array) {
+        for (int i = 0; i < array.length; i++) {
+            digits.add(array[i]);
+        }
     }
 
     /**
@@ -51,8 +67,9 @@ public class BigInteger implements Comparable<BigInteger> {
         for (int i = stringValue.length(); i >= BASE_LENGTH; i -= BASE_LENGTH, k = i) {
             result.digits.add(Integer.parseInt(stringValue.substring(i - BASE_LENGTH, i)));
         }
-        result.digits.add(Integer.parseInt(stringValue.substring(0, k)));
-
+        if (k > 0) {
+            result.digits.add(Integer.parseInt(stringValue.substring(0, k)));
+        }
         removeLeadingZeroes(result.digits);
 
         return result;
@@ -69,37 +86,67 @@ public class BigInteger implements Comparable<BigInteger> {
         }
     }
 
+    private static void removeLeadingZeroes(BigInteger bigInteger) {
+        // remove leading zeroes
+        for (int i = bigInteger.size() - 1; i >= 1; i--) {
+            if (bigInteger.getDigit(bigInteger.size() - 1) == 0) {
+                bigInteger.removeDigit(bigInteger.size() - 1);
+            } else {
+                break;
+            }
+        }
+    }
+
+    public BigInteger assign(BigInteger bigInteger) {
+        digits = new ArrayList<>(bigInteger.size());
+        digits.addAll(bigInteger.digits);
+        sign = bigInteger.sign;
+
+        return this;
+    }
+
+    public BigInteger parse(String stringValue) {
+        BigInteger bigInteger = parseBigInteger(stringValue);
+        assign(bigInteger);
+        return this;
+    }
+
+    public int absCompareTo(BigInteger o) {
+        int compare = 0;
+        if (this.size() > o.size()) {
+            compare = 1;
+        } else if (o.size() > this.size()) {
+            compare = -1;
+        } else {
+            for (int i = size() - 1; i >= 0; i--) {
+                int t = this.getDigit(i) - o.getDigit(i);
+                if (t > 0) {
+                    compare = 1;
+                    break;
+                } else if (t < 0) {
+                    compare = -1;
+                    break;
+                }
+            }
+        }
+        return compare;
+    }
+
     @Override
     public int compareTo(BigInteger o) {
         int compare = 0;
         if (this.getSign() == o.getSign()) {
-            if (this.size() > o.size()) {
-                compare = -1;
-            } else if (o.size() > this.size()) {
-                compare = 1;
-            } else {
-                for (int i = size() - 1; i >= 0; i--) {
-                    int t = this.getDigit(i) - o.getDigit(i);
-                    if (t > 0) {
-                        compare = 1;
-                        break;
-                    } else if (t < 0) {
-                        compare = -1;
-                        break;
-                    }
-                }
-            }
+            compare = absCompareTo(o);
         } else if (this.getSign() == Sign.POSITIVE && o.getSign() == Sign.NEGATIVE) {
             compare = 1;
         } else if (this.getSign() == Sign.NEGATIVE && o.getSign() == Sign.POSITIVE) {
             compare = -1;
         }
-
         return compare;
     }
 
     private int getDigit(int index) {
-        if (index >= digits.size()) {
+        if (index >= digits.size() || index < 0) {
             return 0;
         }
         return digits.get(index);
@@ -121,13 +168,17 @@ public class BigInteger implements Comparable<BigInteger> {
         this.sign = sign;
     }
 
+    /**
+     * Количество разрядов (размер массива digits)
+     *
+     * @return
+     */
     private int size() {
         return digits.size();
     }
 
     public BigInteger multiply(BigInteger arg) {
-        BigInteger result = new BigInteger();
-
+        final BigInteger result = new BigInteger();
         for (int i = 0, carry = 0; i < this.size(); i++) {
             for (int j = 0; j < arg.size() || carry > 0; j++) {
                 long current = (long) this.getDigit(i) * (j < arg.size() ? getDigit(j) : 0) + result.getDigit(i + j) + carry;
@@ -135,69 +186,241 @@ public class BigInteger implements Comparable<BigInteger> {
                 carry = (int) (current / BASE);
             }
         }
-        digits = result.digits;
-        return this;
+        return result;
     }
 
-    public BigInteger divide(BigInteger arg) {
-        throw new NotImplementedException();
+    public BigInteger multiply(int arg) {
+        final BigInteger result = new BigInteger();
+        for (int i = 0, carry = 0; i < this.size() || carry > 0; i++) {
+            long current = (long) arg * (long) getDigit(i) + carry;
+            result.addDigit((int) (current % BASE));
+            carry = (int) (current / BASE);
+        }
+        removeLeadingZeroes(result.digits);
+        return result;
+    }
+
+    public BigInteger divide(int divider) {
+        final BigInteger result = new BigInteger(this);
+        int carry = 0;
+        for (int i = result.size() - 1; i >= 0; --i) {
+            long current = result.getDigit(i) + (long) carry * BASE;
+            result.setDigit(i, (int) (current / divider));
+            carry = (int) (current % divider);
+        }
+        removeLeadingZeroes(result.digits);
+        if (this.sign == Sign.NEGATIVE && divider > 0 || this.sign == Sign.POSITIVE && divider < 0) {
+            result.setSign(Sign.NEGATIVE);
+        }
+        return result;
+    }
+
+    public BigInteger abs() {
+        final BigInteger result = new BigInteger(this);
+        result.setSign(Sign.POSITIVE);
+        return result;
+    }
+
+    // Naive method
+    public BigInteger divideClassic(BigInteger arg) {
+        BigInteger counter = new BigInteger();
+        BigInteger dividend = new BigInteger(this).abs();
+        BigInteger divisor = arg.abs();
+        while (dividend.compareTo(divisor) >= 0) {
+            dividend = dividend.subtract(divisor);
+            counter = counter.add(1);
+        }
+        if (arg.getSign() == Sign.NEGATIVE && this.getSign() == Sign.POSITIVE ||
+                arg.getSign() == Sign.POSITIVE && this.getSign() == Sign.NEGATIVE) {
+            counter.setSign(Sign.NEGATIVE);
+        }
+        return counter;
+    }
+
+    public boolean isZero() {
+        return size() == 0;
+    }
+
+    public BigInteger shiftLeft(int n) {
+        return new BigInteger(this).multiply((int) Math.pow(2, n));
+    }
+
+    public BigInteger shiftRight(int n) {
+        return new BigInteger(this).divide((int) Math.pow(2, n));
+    }
+
+    /**
+     * Fast divide algorithm
+     */
+    public BigInteger divide(BigInteger divider) {
+
+        if (divider.isZero() || this.isZero()) {
+            return new BigInteger();
+        }
+
+        BigInteger u = new BigInteger(this);
+        BigInteger v = new BigInteger(divider);
+        BigInteger q = new BigInteger();
+        BigInteger r = new BigInteger();
+
+        int n = v.size();
+        int m = u.size() - v.size();
+        int[] tempArray = new int[m + 1];
+        tempArray[m] = 1;
+        q = new BigInteger(tempArray);
+
+        int d = (BASE / (v.getDigit(n - 1) + 1));
+        u = u.multiply(d);
+        v = v.multiply(d);
+        if (u.size() == n + m) //аккуратная проверка на d == 1
+        {
+            u.addDigit(0);
+        }
+
+        int j = m;
+
+        while (j >= 0) {
+            long cur = (long) (u.getDigit(j + n)) * (long) (BASE) + u.getDigit(j + n - 1);
+            int tempq = (int) (cur / v.getDigit(n - 1));
+            int tempr = (int) (cur % v.getDigit(n - 1));
+            do {
+                if (tempq == BASE ||
+                        (long) tempq * (long) v.getDigit(n - 2) > (long) BASE * (long) tempr + u.getDigit(j + n - 2)) {
+                    tempq--;
+                    tempr += v.getDigit(n - 1);
+                } else {
+                    break;
+                }
+            } while (tempr < BASE);
+            BigInteger u2 = new BigInteger(u.digits.subList(j, j + n + 1));
+            u2 = u2.subtract(v.multiply(tempq));
+            boolean flag = false;
+            if (u2.getSign() == Sign.NEGATIVE) //если отрицательные
+            {
+                flag = true;
+                List<Integer> bn = new ArrayList<Integer>();
+                for (int i = 0; i <= n; i++) {
+                    bn.add(0);
+                }
+                bn.add(1);
+                u2.setSign(Sign.POSITIVE);
+                u2 = new BigInteger(bn).subtract(u2);
+            }
+            q.setDigit(j, tempq);
+            if (flag) {
+                q.setDigit(j, q.getDigit(j) - 1);
+                u2 = u2.add(v);
+                if (u2.size() > n + j)
+                    u2.removeDigit(n + j);
+
+            }
+            for (int h = j; h < j + n; h++) {
+                if (h - j >= u2.size()) {
+                    u.setDigit(h, 0);
+                } else {
+                    u.setDigit(h, u2.getDigit(h - j));
+                }
+            }
+            j--;
+
+        }
+        removeLeadingZeroes(q.digits);
+        return q;
+    }
+
+    private void removeDigit(int index) {
+        digits.remove(index);
+    }
+
+
+    public BigInteger pow(int a) {
+        a = Math.abs(a);
+        if (a == 0) {
+            return new BigInteger(0);
+        }
+        BigInteger result = new BigInteger(this);
+        while (a > 1) {
+            result = result.multiply(result);
+            a--;
+        }
+        return result;
+    }
+
+    private void addDigit(int digit) {
+        digits.add(digit);
+    }
+
+    public BigInteger add(int arg) {
+        return new BigInteger(String.valueOf(arg)).add(this);
+    }
+
+    public BigInteger inc() {
+        return new BigInteger(1).add(this);
     }
 
     public BigInteger add(BigInteger arg) {
-
 
         if (this.getSign() == Sign.POSITIVE && arg.getSign() == Sign.NEGATIVE) {
             return subtract(arg);
         } else if (this.getSign() == Sign.NEGATIVE && arg.getSign() == Sign.POSITIVE) {
             return arg.subtract(this);
         }
-
         int carry = -1;
-        final List<Integer> result = new ArrayList<>();
+        final BigInteger result = new BigInteger();
         for (int i = 0; i < Math.max(this.size(), arg.size()) || carry >= 0; i++) {
             int sum = 0;
-
             if (carry >= 0) {
                 sum += 1;
             }
-
             sum += i < arg.size() ? arg.digits.get(i) : 0;
             sum += i < this.size() ? this.digits.get(i) : 0;
-
             carry = sum - BASE;
-
             if (carry >= 0)
                 sum -= BASE;
-
-            result.add(sum);
+            result.addDigit(sum);
         }
-
-        digits = result;
-
-        return this;
+        return result;
     }
 
     public BigInteger subtract(BigInteger arg) {
 
+        BigInteger result = new BigInteger();
+        // this - arg
+        // b - a
         BigInteger a = arg;
         BigInteger b = this;
 
-        if (b.compareTo(a) < 0) {
-            /*
-                Меняем местами уменшаемое и вычитаемое, устанавливаем знак 'минус' и производим обычное вычитание
-            */
-            a = this;
-            b = arg;
-            setSign(Sign.NEGATIVE);
-        } else if (b.compareTo(a) == 0) {
+
+        if (b.compareTo(a) == 0) {
             /*
                 Возвращаем нуль, поскольку оба числа равны
             */
             return new BigInteger();
         }
 
+
+        if (b.getSign() == Sign.POSITIVE && a.getSign() == Sign.POSITIVE) {
+            if (b.compareTo(a) < 0) {
+            /*
+                Меняем местами уменшаемое и вычитаемое, устанавливаем знак 'минус' и производим обычное вычитание
+            */
+                a = this;
+                b = arg;
+                setSign(Sign.NEGATIVE);
+            }
+        } else if (b.getSign() == Sign.POSITIVE && a.getSign() == Sign.NEGATIVE) {
+            return b.add(a.abs());
+        } else if (b.getSign() == Sign.NEGATIVE && a.getSign() == Sign.POSITIVE) {
+            result = a.add(b.abs());
+            result.setSign(Sign.NEGATIVE);
+            return result;
+        } else if (b.getSign() == Sign.NEGATIVE && a.getSign() == Sign.NEGATIVE) {
+            a = a.abs();
+            return a.subtract(b);
+        }
+
         int carry = 0;
-        final List<Integer> result = new ArrayList<>();
+
         for (int i = 0; i < b.size() || carry == 1; i++) {
 
             int diff = -carry;
@@ -210,27 +433,24 @@ public class BigInteger implements Comparable<BigInteger> {
                 carry = 1;
                 diff += BASE;
             }
-            result.add(diff);
+            result.addDigit(diff);
         }
-
-        digits = result;
-        removeLeadingZeroes(digits);
-        return this;
+        removeLeadingZeroes(result.digits);
+        return result;
     }
 
-    public BigInteger parse(String stringValue) {
-        digits = parseBigInteger(stringValue).digits;
-        return this;
-    }
 
     @Override
     public String toString() {
         if (digits.size() == 0)
             return "0";
-
         StringBuilder result = new StringBuilder();
         for (int i = digits.size() - 1; i >= 0; i--) {
-            result.append(digits.get(i).toString());
+            if (i == digits.size() - 1) {
+                result.append(String.format("%d", digits.get(i)));
+            } else {
+                result.append(String.format("%09d", digits.get(i)));
+            }
         }
         return (sign == Sign.NEGATIVE ? "-" : "") + result.toString();
     }
