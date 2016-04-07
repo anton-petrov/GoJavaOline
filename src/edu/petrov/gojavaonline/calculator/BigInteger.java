@@ -5,17 +5,18 @@ import java.util.List;
 
 /**
  * Created by anton on 05/04/16.
+ * BigInteger is immutable type.
  */
+
 public class BigInteger implements Comparable<BigInteger> {
 
-    private static int BASE = 1000 * 1000 * 1000;
-    private static String STRING_BASE_VALUE = Integer.toString(BASE);
-    private static int BASE_LENGTH = STRING_BASE_VALUE.length() - 1;
-    private List<Integer> digits = new ArrayList<>();
+    private final static int BASE = 1000 * 1000 * 1000;
+    private final static String STRING_BASE_VALUE = Integer.toString(BASE);
+    private final static int BASE_LENGTH = STRING_BASE_VALUE.length() - 1;
+    private final List<Integer> digits = new ArrayList<>();
     private Sign sign = Sign.POSITIVE;
 
     public BigInteger() {
-
     }
 
     public BigInteger(String stringValue) {
@@ -86,22 +87,21 @@ public class BigInteger implements Comparable<BigInteger> {
         }
     }
 
-    private static void removeLeadingZeroes(BigInteger bigInteger) {
-        // remove leading zeroes
-        for (int i = bigInteger.size() - 1; i >= 1; i--) {
-            if (bigInteger.getDigit(bigInteger.size() - 1) == 0) {
-                bigInteger.removeDigit(bigInteger.size() - 1);
-            } else {
-                break;
-            }
-        }
-    }
+//    private static void removeLeadingZeroes(BigInteger bigInteger) {
+//        // remove leading zeroes
+//        for (int i = bigInteger.size() - 1; i >= 1; i--) {
+//            if (bigInteger.getDigit(bigInteger.size() - 1) == 0) {
+//                bigInteger.removeDigit(bigInteger.size() - 1);
+//            } else {
+//                break;
+//            }
+//        }
+//    }
 
     public BigInteger assign(BigInteger bigInteger) {
-        digits = new ArrayList<>(bigInteger.size());
+        digits.clear();
         digits.addAll(bigInteger.digits);
         sign = bigInteger.sign;
-
         return this;
     }
 
@@ -133,17 +133,27 @@ public class BigInteger implements Comparable<BigInteger> {
     }
 
     @Override
-    public int compareTo(BigInteger o) {
+    public int compareTo(BigInteger val) {
         int compare = 0;
-        if (this.getSign() == o.getSign()) {
-            compare = absCompareTo(o);
-        } else if (this.getSign() == Sign.POSITIVE && o.getSign() == Sign.NEGATIVE) {
+        if (this.getSign() == val.getSign()) {
+            compare = absCompareTo(val);
+        } else if (this.getSign() == Sign.POSITIVE && val.getSign() == Sign.NEGATIVE) {
             compare = 1;
-        } else if (this.getSign() == Sign.NEGATIVE && o.getSign() == Sign.POSITIVE) {
+        } else if (this.getSign() == Sign.NEGATIVE && val.getSign() == Sign.POSITIVE) {
             compare = -1;
         }
         return compare;
     }
+
+    public BigInteger max(BigInteger val) {
+        return compareTo(val) > 0 ? this : val;
+    }
+
+    public BigInteger min(BigInteger val) {
+        return compareTo(val) < 0 ? this : val;
+    }
+
+
 
     private int getDigit(int index) {
         if (index >= digits.size() || index < 0) {
@@ -225,6 +235,7 @@ public class BigInteger implements Comparable<BigInteger> {
     }
 
     // Naive method
+    @Deprecated
     public BigInteger divideClassic(BigInteger arg) {
         BigInteger counter = new BigInteger();
         BigInteger dividend = new BigInteger(this).abs();
@@ -252,16 +263,24 @@ public class BigInteger implements Comparable<BigInteger> {
         return new BigInteger(this).divide((int) Math.pow(2, n));
     }
 
+    public BigInteger mod(BigInteger divider) {
+        return divideAndRemainder(divider)[1];
+    }
+
     public BigInteger[] divideAndRemainder(BigInteger divider) throws ArithmeticException {
 
-        if (divider.isZero() || this.isZero()) {
+        if (divider.isZero()) {
             throw new IllegalArgumentException("Divide by zero!");
+        }
+
+        if (isZero()) {
+            return new BigInteger[]{new BigInteger(), new BigInteger()};
         }
 
         BigInteger u = new BigInteger(this);
         BigInteger v = new BigInteger(divider);
-        BigInteger q = new BigInteger();
-        BigInteger r = new BigInteger();
+        BigInteger q;
+        BigInteger r;
 
         int n = v.size();
         int m = u.size() - v.size();
@@ -396,10 +415,11 @@ public class BigInteger implements Comparable<BigInteger> {
             result.setSign(Sign.NEGATIVE);
             return result;
         } else if (b.getSign() == Sign.NEGATIVE && a.getSign() == Sign.NEGATIVE) {
-            a = a.abs();
+            a.setSign(Sign.POSITIVE);
             return a.subtract(b);
         }
 
+        // diff = a - b, a >=, b >= 0, a > b
         for (int i = 0, carry = 0; i < b.size() || carry == 1; i++) {
 
             int diff = -carry;
@@ -428,7 +448,7 @@ public class BigInteger implements Comparable<BigInteger> {
             if (i == digits.size() - 1) {
                 result.append(String.format("%d", digits.get(i)));
             } else {
-                result.append(String.format("%09d", digits.get(i)));
+                result.append(String.format("%0" + BASE_LENGTH + "d", digits.get(i)));
             }
         }
         return (sign == Sign.NEGATIVE ? "-" : "") + result.toString();
@@ -449,7 +469,7 @@ public class BigInteger implements Comparable<BigInteger> {
     @Override
     public int hashCode() {
         int result = digits.hashCode();
-        result = 31 * result + sign.value();
+        result = 31 * result * sign.value();
         return result;
     }
 
@@ -468,6 +488,5 @@ public class BigInteger implements Comparable<BigInteger> {
             }
         }
     }
-
 
 }
