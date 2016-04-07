@@ -15,7 +15,7 @@ public class BigInteger implements Comparable<BigInteger> {
     private final static String STRING_BASE_VALUE = Integer.toString(BASE);
     private final static int BASE_LENGTH = STRING_BASE_VALUE.length() - 1;
     // Минимальная длина массива разрядов длинного числа, на которой запускать алгоритм Карацубы
-    public final int KARATSUBA_MIN = 8;
+    public final int KARATSUBA_MIN = 1;
     private final List<Integer> digits = new ArrayList<>();
     private Sign sign = Sign.POSITIVE;
 
@@ -190,9 +190,12 @@ public class BigInteger implements Comparable<BigInteger> {
         } else if (size() == 1) {
             return new BigInteger(this);
         } else {
-            int halfSize = (int) Math.ceil(digits.size() / 2.0);
-            return new BigInteger(Arrays.copyOfRange(digits.toArray(new Integer[0]), 0, halfSize));
+            return new BigInteger(Arrays.copyOfRange(digits.toArray(new Integer[0]), 0, halfSize()));
         }
+    }
+
+    private int halfSize() {
+        return (digits.size() + 1) / 2;
     }
 
     public BigInteger High() {
@@ -201,11 +204,16 @@ public class BigInteger implements Comparable<BigInteger> {
         } else if (size() == 1) {
             return new BigInteger(this);
         } else {
-            int halfSize = (int) Math.ceil(digits.size() / 2.0);
-            BigInteger result = new BigInteger(Arrays.copyOfRange(digits.toArray(new Integer[0]), halfSize, digits.size()));
-            result.shiftDigitsRight(halfSize);
+
+            BigInteger result = new BigInteger(Arrays.copyOfRange(digits.toArray(new Integer[0]), halfSize(), digits.size()));
             return result;
         }
+    }
+
+    public BigInteger normalizedHigh() {
+        BigInteger result = this.High();
+        result.shiftDigitsRight(halfSize());
+        return result;
     }
 
     private void shiftDigitsLeft(int n) {
@@ -234,13 +242,55 @@ public class BigInteger implements Comparable<BigInteger> {
         return digits.size();
     }
 
-    public BigInteger karatsubaMultiply(BigInteger n) {
-        final BigInteger result = new BigInteger();
 
-        if (n.size() <= KARATSUBA_MIN) {
+    public BigInteger karatsubaMultiply(BigInteger n) {
+        BigInteger product = new BigInteger();
+        int N = Math.max(this.size(), n.size());
+
+        if (N <= KARATSUBA_MIN) {
             return this.multiply(n);
         }
-        return result;
+
+        BigInteger aL = this.Low();
+        BigInteger aR = this.High();
+        BigInteger bL = n.Low();
+        BigInteger bR = n.High();
+
+        BigInteger sA = aL.add(aR);
+        BigInteger sB = bL.add(bR);
+
+        BigInteger P2 = aL.karatsubaMultiply(bL);
+        BigInteger P1 = aR.karatsubaMultiply(bR);
+        BigInteger P3 = sA.karatsubaMultiply(sB);
+        BigInteger P4 = P3.subtract(P1).subtract(P2);
+
+        // Prod1 * 10 ^ n + (Prod3 - Prod1 - Prod2) * 10 ^ (n / 2) + Prod2
+
+        final BigInteger base = new BigInteger(STRING_BASE_VALUE);
+
+        product = base.pow(N);
+
+        product = P1.multiply(product);
+
+        product = product.add(P2);
+
+        product = product.add(P4.multiply(base.pow(N / 2)));
+
+
+        return product;
+    }
+
+    private void normalize() {
+        for (int i = 0, carry = 0; i < size() || carry > 0; i++) {
+            int current = getDigit(i) + carry;
+            setDigit(i, current % BASE);
+            carry = current / BASE;
+        }
+        removeLeadingZeroes(digits);
+    }
+
+    private void addDigits(List<Integer> _digits) {
+        digits.addAll(_digits);
     }
 
     public BigInteger multiply(BigInteger arg) {
@@ -255,6 +305,7 @@ public class BigInteger implements Comparable<BigInteger> {
                 carry = (int) (current / BASE);
             }
         }
+        removeLeadingZeroes(digits);
         return result;
     }
 
@@ -423,7 +474,7 @@ public class BigInteger implements Comparable<BigInteger> {
         return new BigInteger(1).add(this);
     }
 
-    public BigInteger add(BigInteger arg) {
+    public BigInteger add(final BigInteger arg) {
 
         if (this.getSign() == Sign.POSITIVE && arg.getSign() == Sign.NEGATIVE) {
             return subtract(arg);
