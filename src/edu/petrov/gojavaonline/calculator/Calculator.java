@@ -58,5 +58,9 @@ public class Calculator {
 
 //        System.out.println(new BigInteger("9879876956785745665487600").pow(10));
 
+        System.out.println(new BigInteger().Low());
+        System.out.println(new BigInteger().High());
+
+        //Arrays.copyOfRange()
     }
 }

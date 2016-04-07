@@ -1,6 +1,7 @@
 package edu.petrov.gojavaonline.calculator;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -13,6 +14,8 @@ public class BigInteger implements Comparable<BigInteger> {
     private final static int BASE = 1000 * 1000 * 1000;
     private final static String STRING_BASE_VALUE = Integer.toString(BASE);
     private final static int BASE_LENGTH = STRING_BASE_VALUE.length() - 1;
+    // Минимальная длина массива разрядов длинного числа, на которой запускать алгоритм Карацубы
+    public final int KARATSUBA_MIN = 8;
     private final List<Integer> digits = new ArrayList<>();
     private Sign sign = Sign.POSITIVE;
 
@@ -35,6 +38,11 @@ public class BigInteger implements Comparable<BigInteger> {
         digits.addAll(integerList);
     }
 
+    private BigInteger(Integer[] array) {
+        for (int i = 0; i < array.length; i++) {
+            digits.add(array[i]);
+        }
+    }
     private BigInteger(int[] array) {
         for (int i = 0; i < array.length; i++) {
             digits.add(array[i]);
@@ -76,17 +84,6 @@ public class BigInteger implements Comparable<BigInteger> {
         return result;
     }
 
-    private static void removeLeadingZeroes(List<Integer> digits) {
-        // remove leading zeroes
-        for (int i = digits.size() - 1; i >= 1; i--) {
-            if (digits.get(digits.size() - 1) == 0) {
-                digits.remove(digits.size() - 1);
-            } else {
-                break;
-            }
-        }
-    }
-
 //    private static void removeLeadingZeroes(BigInteger bigInteger) {
 //        // remove leading zeroes
 //        for (int i = bigInteger.size() - 1; i >= 1; i--) {
@@ -97,6 +94,17 @@ public class BigInteger implements Comparable<BigInteger> {
 //            }
 //        }
 //    }
+
+    private static void removeLeadingZeroes(List<Integer> digits) {
+        // remove leading zeroes
+        for (int i = digits.size() - 1; i >= 1; i--) {
+            if (digits.get(digits.size() - 1) == 0) {
+                digits.remove(digits.size() - 1);
+            } else {
+                break;
+            }
+        }
+    }
 
     public BigInteger assign(BigInteger bigInteger) {
         digits.clear();
@@ -153,8 +161,6 @@ public class BigInteger implements Comparable<BigInteger> {
         return compareTo(val) < 0 ? this : val;
     }
 
-
-
     private int getDigit(int index) {
         if (index >= digits.size() || index < 0) {
             return 0;
@@ -178,6 +184,47 @@ public class BigInteger implements Comparable<BigInteger> {
         this.sign = sign;
     }
 
+    public BigInteger Low() {
+        if (size() == 0) {
+            return new BigInteger();
+        } else if (size() == 1) {
+            return new BigInteger(this);
+        } else {
+            int halfSize = (int) Math.ceil(digits.size() / 2.0);
+            return new BigInteger(Arrays.copyOfRange(digits.toArray(new Integer[0]), 0, halfSize));
+        }
+    }
+
+    public BigInteger High() {
+        if (size() == 0) {
+            return new BigInteger();
+        } else if (size() == 1) {
+            return new BigInteger(this);
+        } else {
+            int halfSize = (int) Math.ceil(digits.size() / 2.0);
+            BigInteger result = new BigInteger(Arrays.copyOfRange(digits.toArray(new Integer[0]), halfSize, digits.size()));
+            result.shiftDigitsRight(halfSize);
+            return result;
+        }
+    }
+
+    private void shiftDigitsLeft(int n) {
+        if (digits.size() == 0) {
+            return;
+        }
+        List<Integer> shiftedDigits = new ArrayList<>(digits.subList(n, digits.size()));
+        digits.clear();
+        digits.addAll(shiftedDigits);
+    }
+
+    private void shiftDigitsRight(int n) {
+        for (int i = 0; i < n; i++) {
+            digits.add(0, 0);
+        }
+    }
+
+    // TODO Реализовать алогоритм Карацубы для быстрого умножения
+
     /**
      * Количество разрядов (размер массива digits)
      *
@@ -187,7 +234,15 @@ public class BigInteger implements Comparable<BigInteger> {
         return digits.size();
     }
 
-    // TODO Реализовать алогоритм Карацубы для быстрого умножения
+    public BigInteger karatsubaMultiply(BigInteger n) {
+        final BigInteger result = new BigInteger();
+
+        if (n.size() <= KARATSUBA_MIN) {
+            return this.multiply(n);
+        }
+        return result;
+    }
+
     public BigInteger multiply(BigInteger arg) {
         final BigInteger result = new BigInteger();
         for (int i = 0; i < this.size(); i++) {
