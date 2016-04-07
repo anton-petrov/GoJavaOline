@@ -30,7 +30,7 @@ public class BigInteger implements Comparable<BigInteger> {
         assign(bigInteger);
     }
 
-    public BigInteger(List<Integer> integerList) {
+    private BigInteger(List<Integer> integerList) {
         digits.addAll(integerList);
     }
 
@@ -179,9 +179,12 @@ public class BigInteger implements Comparable<BigInteger> {
 
     public BigInteger multiply(BigInteger arg) {
         final BigInteger result = new BigInteger();
-        for (int i = 0, carry = 0; i < this.size(); i++) {
-            for (int j = 0; j < arg.size() || carry > 0; j++) {
-                long current = (long) this.getDigit(i) * (j < arg.size() ? getDigit(j) : 0) + result.getDigit(i + j) + carry;
+        for (int i = 0; i < this.size(); i++) {
+            for (int j = 0, carry = 0; j < arg.size() || carry > 0; j++) {
+                long current = (long) (this.getDigit(i))
+                        * (j < arg.size() ? arg.getDigit(j) : 0)
+                        + result.getDigit(i + j)
+                        + carry;
                 result.setDigit(i + j, (int) (current % BASE));
                 carry = (int) (current / BASE);
             }
@@ -238,7 +241,7 @@ public class BigInteger implements Comparable<BigInteger> {
     }
 
     public boolean isZero() {
-        return size() == 0;
+        return (size() == 0 || (size() == 1 && getDigit(0) == 0));
     }
 
     public BigInteger shiftLeft(int n) {
@@ -249,13 +252,10 @@ public class BigInteger implements Comparable<BigInteger> {
         return new BigInteger(this).divide((int) Math.pow(2, n));
     }
 
-    /**
-     * Fast Knuth divide algorithm
-     */
-    public BigInteger divide(BigInteger divider) {
+    public BigInteger[] divideAndRemainder(BigInteger divider) throws ArithmeticException {
 
         if (divider.isZero() || this.isZero()) {
-            return new BigInteger();
+            throw new IllegalArgumentException("Divide by zero!");
         }
 
         BigInteger u = new BigInteger(this);
@@ -294,26 +294,7 @@ public class BigInteger implements Comparable<BigInteger> {
             } while (R < BASE);
             BigInteger u2 = new BigInteger(u.digits.subList(j, j + n + 1));
             u2 = u2.subtract(v.multiply(Q));
-            boolean flag = false;
-            if (u2.getSign() == Sign.NEGATIVE)
-            {
-                flag = true;
-                List<Integer> bn = new ArrayList<>();
-                for (int i = 0; i <= n; i++) {
-                    bn.add(0);
-                }
-                bn.add(1);
-                u2.setSign(Sign.POSITIVE);
-                u2 = new BigInteger(bn).subtract(u2);
-            }
             q.setDigit(j, Q);
-            if (flag) {
-                q.setDigit(j, q.getDigit(j) - 1);
-                u2 = u2.add(v);
-                if (u2.size() > n + j)
-                    u2.removeDigit(n + j);
-
-            }
             for (int h = j; h < j + n; h++) {
                 if (h - j >= u2.size()) {
                     u.setDigit(h, 0);
@@ -325,9 +306,16 @@ public class BigInteger implements Comparable<BigInteger> {
 
         }
         removeLeadingZeroes(q.digits);
-        // remainder, don't need at this time
-        r = new BigInteger(u.digits.subList(0, u.size() - 1)).divide(d);
-        return q;
+        // остаток от деления
+        r = this.subtract(q.multiply(divider));
+        return new BigInteger[]{q, r};
+    }
+
+    /**
+     * Fast Knuth divide algorithm
+     */
+    public BigInteger divide(BigInteger divider) {
+        return divideAndRemainder(divider)[0];
     }
 
     private void removeDigit(int index) {
@@ -384,31 +372,22 @@ public class BigInteger implements Comparable<BigInteger> {
         return result;
     }
 
-    public BigInteger subtract(BigInteger arg) {
+    public BigInteger subtract(final BigInteger arg) {
 
         BigInteger result = new BigInteger();
         // this - arg
         // b - a
-        BigInteger a = arg;
-        BigInteger b = this;
-
-
+        BigInteger a = new BigInteger(arg);
+        BigInteger b = new BigInteger(this);
         if (b.compareTo(a) == 0) {
-            /*
-                Возвращаем нуль, поскольку оба числа равны
-            */
             return new BigInteger();
         }
-
-
         if (b.getSign() == Sign.POSITIVE && a.getSign() == Sign.POSITIVE) {
             if (b.compareTo(a) < 0) {
-            /*
-                Меняем местами уменшаемое и вычитаемое, устанавливаем знак 'минус' и производим обычное вычитание
-            */
-                a = this;
-                b = arg;
-                setSign(Sign.NEGATIVE);
+                BigInteger t = a;
+                a = b;
+                b = t;
+                result.setSign(Sign.NEGATIVE);
             }
         } else if (b.getSign() == Sign.POSITIVE && a.getSign() == Sign.NEGATIVE) {
             return b.add(a.abs());
@@ -421,9 +400,7 @@ public class BigInteger implements Comparable<BigInteger> {
             return a.subtract(b);
         }
 
-        int carry = 0;
-
-        for (int i = 0; i < b.size() || carry == 1; i++) {
+        for (int i = 0, carry = 0; i < b.size() || carry == 1; i++) {
 
             int diff = -carry;
             carry = 0;
