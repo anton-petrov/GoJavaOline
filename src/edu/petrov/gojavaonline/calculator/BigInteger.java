@@ -15,7 +15,7 @@ public class BigInteger implements Comparable<BigInteger> {
     private final static String STRING_BASE_VALUE = Integer.toString(BASE);
     private final static int BASE_LENGTH = STRING_BASE_VALUE.length() - 1;
     // Минимальная длина массива разрядов длинного числа, на которой запускать алгоритм Карацубы
-    public final int KARATSUBA_MIN = 1;
+    public final int KARATSUBA_MIN = 8;
     private final List<Integer> digits = new ArrayList<>();
     private Sign sign = Sign.POSITIVE;
 
@@ -231,8 +231,6 @@ public class BigInteger implements Comparable<BigInteger> {
         }
     }
 
-    // TODO Реализовать алогоритм Карацубы для быстрого умножения
-
     /**
      * Количество разрядов (размер массива digits)
      *
@@ -243,42 +241,6 @@ public class BigInteger implements Comparable<BigInteger> {
     }
 
 
-    public BigInteger karatsubaMultiply(BigInteger n) {
-        BigInteger product = new BigInteger();
-        int N = Math.max(this.size(), n.size());
-
-        if (N <= KARATSUBA_MIN) {
-            return this.multiply(n);
-        }
-
-        BigInteger aL = this.Low();
-        BigInteger aR = this.High();
-        BigInteger bL = n.Low();
-        BigInteger bR = n.High();
-
-        BigInteger sA = aL.add(aR);
-        BigInteger sB = bL.add(bR);
-
-        BigInteger P2 = aL.karatsubaMultiply(bL);
-        BigInteger P1 = aR.karatsubaMultiply(bR);
-        BigInteger P3 = sA.karatsubaMultiply(sB);
-        BigInteger P4 = P3.subtract(P1).subtract(P2);
-
-        // Prod1 * 10 ^ n + (Prod3 - Prod1 - Prod2) * 10 ^ (n / 2) + Prod2
-
-        final BigInteger base = new BigInteger(STRING_BASE_VALUE);
-
-        product = base.pow(N);
-
-        product = P1.multiply(product);
-
-        product = product.add(P2);
-
-        product = product.add(P4.multiply(base.pow(N / 2)));
-
-
-        return product;
-    }
 
     private void normalize() {
         for (int i = 0, carry = 0; i < size() || carry > 0; i++) {
@@ -294,6 +256,9 @@ public class BigInteger implements Comparable<BigInteger> {
     }
 
     public BigInteger multiply(BigInteger arg) {
+        if (size() >= KARATSUBA_MIN || arg.size() >= KARATSUBA_MIN) {
+            return karatsubaMultiply(arg);
+        }
         final BigInteger result = new BigInteger();
         for (int i = 0; i < this.size(); i++) {
             for (int j = 0, carry = 0; j < arg.size() || carry > 0; j++) {
@@ -318,6 +283,45 @@ public class BigInteger implements Comparable<BigInteger> {
         }
         removeLeadingZeroes(result.digits);
         return result;
+    }
+
+    /**
+     * Алгоритм умножения Карацубы. Работает эффективно на очень больших числах.
+     *
+     * @param n
+     * @return
+     */
+    public BigInteger karatsubaMultiply(BigInteger n) {
+        BigInteger product;
+        int N = Math.max(this.size(), n.size());
+
+        if (N <= KARATSUBA_MIN) {
+            return this.multiply(n);
+        }
+
+        BigInteger aL = this.Low();
+        BigInteger aR = this.High();
+        BigInteger bL = n.Low();
+        BigInteger bR = n.High();
+
+        BigInteger sA = aL.add(aR);
+        BigInteger sB = bL.add(bR);
+
+        BigInteger P2 = aL.karatsubaMultiply(bL);
+        BigInteger P1 = aR.karatsubaMultiply(bR);
+        BigInteger P3 = sA.karatsubaMultiply(sB);
+        BigInteger P4 = P3.subtract(P1).subtract(P2);
+
+        // Prod1 * 10 ^ n + (Prod3 - Prod1 - Prod2) * 10 ^ (n / 2) + Prod2
+
+        final BigInteger base = new BigInteger(STRING_BASE_VALUE);
+
+        product = base.pow(N);
+        product = P1.multiply(product);
+        product = product.add(P2);
+        product = product.add(P4.multiply(base.pow(N / 2)));
+
+        return product;
     }
 
     public BigInteger divide(int divider) {
