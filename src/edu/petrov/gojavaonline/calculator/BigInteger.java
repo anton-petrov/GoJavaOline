@@ -187,6 +187,7 @@ public class BigInteger implements Comparable<BigInteger> {
         return digits.size();
     }
 
+    // TODO Реализовать алогоритм Карацубы для быстрого умножения
     public BigInteger multiply(BigInteger arg) {
         final BigInteger result = new BigInteger();
         for (int i = 0; i < this.size(); i++) {
@@ -374,10 +375,10 @@ public class BigInteger implements Comparable<BigInteger> {
         } else if (this.getSign() == Sign.NEGATIVE && arg.getSign() == Sign.POSITIVE) {
             return arg.subtract(this);
         }
-        int carry = -1;
+        long carry = -1;
         final BigInteger result = new BigInteger();
         for (int i = 0; i < Math.max(this.size(), arg.size()) || carry >= 0; i++) {
-            int sum = 0;
+            long sum = 0;
             if (carry >= 0) {
                 sum += 1;
             }
@@ -386,7 +387,7 @@ public class BigInteger implements Comparable<BigInteger> {
             carry = sum - BASE;
             if (carry >= 0)
                 sum -= BASE;
-            result.addDigit(sum);
+            result.addDigit((int) sum);
         }
         return result;
     }
