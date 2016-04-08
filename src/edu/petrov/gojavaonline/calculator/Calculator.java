@@ -9,8 +9,8 @@ public class Calculator {
     private static String A = "910463872391046387239104638723";
     private static String B = "1850009341";
 
-    private static String C = "9000000001";
-    private static String D = "3000000001";
+    private static String C = "9448154591";
+    private static String D = "3441123441";
 
 
     private static String T1 = "3000000000";
@@ -61,6 +61,26 @@ public class Calculator {
 
 //        System.out.println(new BigInteger("900000000").multiply(new BigInteger("3")));
 
-        //Arrays.copyOfRange()
+
+        System.out.println(new BigInteger("1").divide(2));
+
+        System.out.println(new BigInteger("256000000000")
+                .karatsubaMultiply(new BigInteger("256000000001")));
+        System.out.println(new BigInteger("256000000000")
+                .multiply(new BigInteger("256000000001")));
+
+
+        //System.out.println(new BigInteger("400000000000000000000").pow(new BigInteger("4")));
+
+
+        final BigInteger testBigInteger = new BigInteger("40000000000000001");
+        final BigInteger testBigInteger2 = new BigInteger("4000000000");
+
+//
+//        System.out.println("multiply");
+//        System.out.println(testBigInteger.multiply(testBigInteger).multiply(testBigInteger));
+//        System.out.println("karatsubaMultiply");
+//        System.out.println(testBigInteger.karatsubaMultiply(testBigInteger).karatsubaMultiply(testBigInteger));
     }
 }
+
