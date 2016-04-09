@@ -1,7 +1,6 @@
 package edu.petrov.gojavaonline.calculator;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -12,11 +11,11 @@ import java.util.List;
 public class BigInteger implements Comparable<BigInteger> {
 
     public static final BigInteger ZERO = new BigInteger();
-    private final static int BASE = 1000 * 1000 * 1000;
+    private final static int BASE = 10; //1000 * 1000 * 1000;
     private final static String STRING_BASE_VALUE = Integer.toString(BASE);
     private final static int BASE_LENGTH = STRING_BASE_VALUE.length() - 1;
     // Минимальная длина массива разрядов длинного числа, на которой запускать алгоритм Карацубы
-    private static final int KARATSUBA_MIN = 2;
+    private static final int KARATSUBA_THRESHOLD = 2;
     private static final BigInteger base = new BigInteger(STRING_BASE_VALUE);
     private final List<Integer> digits = new ArrayList<>();
     private Sign sign = Sign.POSITIVE;
@@ -232,7 +231,7 @@ public class BigInteger implements Comparable<BigInteger> {
     }
 
     private int halfSize() {
-        return (digits.size() + 1) / 2;
+        return digits.size() / 2;
     }
 
     public Sign getSign() {
@@ -261,25 +260,27 @@ public class BigInteger implements Comparable<BigInteger> {
         }
     }
 
-    public BigInteger Low() {
+    public BigInteger getLow(int n) {
         if (size() == 0) {
             return new BigInteger();
         } else if (size() == 1) {
             return new BigInteger(this);
         } else {
-            return new BigInteger(Arrays.copyOfRange(digits.toArray(new Integer[0]), 0, halfSize()));
+            if (n > size()) n = size();
+            return new BigInteger(digits.subList(0, n));
         }
     }
+// 1  2  0
+//[0][1][2]
 
-    public BigInteger High() {
+    public BigInteger getHigh(int n) {
         if (size() == 0) {
             return new BigInteger();
-        } else if (size() == 1) {
+        } else if (size() <= n) {
             return new BigInteger(); // High part doesn't exist, but returning 0
         } else {
-
-            BigInteger result = new BigInteger(Arrays.copyOfRange(digits.toArray(new Integer[0]), halfSize(), digits.size()));
-            return result;
+            if (n > size()) n = size();
+            return new BigInteger(digits.subList(size() - n + 1, size()));
         }
     }
 
@@ -287,24 +288,26 @@ public class BigInteger implements Comparable<BigInteger> {
         digits.addAll(_digits);
     }
 
-    public BigInteger normalizedHigh() {
-        BigInteger result = this.High();
-        result.shiftDigitsRight(halfSize());
-        return result;
-    }
-
     public void shiftDigitsRight(int n) {
         if (digits.size() == 0) {
             return;
         }
-        List<Integer> shiftedDigits = new ArrayList<>(digits.subList(n, digits.size()));
-        digits.clear();
-        digits.addAll(shiftedDigits);
+        for (int i = 0; i < n; i++) {
+            if (digits.size() > 0) {
+                digits.remove(0);
+            } else {
+                break;
+            }
+        }
     }
 
     public void shiftDigitsLeft(int n) {
+        if (digits.size() == 0) {
+            return;
+        }
         for (int i = 0; i < n; i++) {
             digits.add(0, 0);
+            //digits.remove(digits.size()-1);
         }
     }
 
@@ -338,16 +341,17 @@ public class BigInteger implements Comparable<BigInteger> {
                 carry = (int) (current / BASE);
             }
         }
-        removeLeadingZeroes(digits);
+        removeLeadingZeroes(result.digits);
         result.computeSignForMulDiv(val);
         return result;
     }
 
     public BigInteger multiply(BigInteger val) {
-//        if (size() >= KARATSUBA_MIN || val.size() >= KARATSUBA_MIN) {
-//            return karatsubaMultiply(val);
-//        }
+//        if (size() >= KARATSUBA_THRESHOLD || val.size() >= KARATSUBA_THRESHOLD) {
+//            return multiplyKaratsuba(val);
+//        } else {
         return _multiply(val);
+//        }
     }
 
     public BigInteger multiply(int val) {
@@ -369,39 +373,69 @@ public class BigInteger implements Comparable<BigInteger> {
      * @return
      */
     public BigInteger multiplyKaratsuba(BigInteger n) {
+        System.out.println("---begin karatsuba---");
         BigInteger product = new BigInteger();
-        BigInteger A = this;
-        BigInteger B = n;
+        BigInteger X = this;
+        BigInteger Y = n;
+        int xlen = X.size();
+        int ylen = Y.size();
+
+
         int N = Math.max(this.size(), n.size());
-        int N2 = (Math.max(this.size(), n.size()) + 1) / 2;
+        int half = (Math.max(xlen, ylen) + 1) / 2;
+        System.out.println("N = " + N);
+        System.out.println("Нижняя граница [n/2] * 2 = " + (int) (2 * Math.floor(N / 2.0)));
+        System.out.println("Нижняя граница [n/2] = " + (int) Math.floor(N / 2.0));
+        System.out.println("half * 2 = " + half * 2);
+        System.out.println("half = " + half);
 
-        N = (N / 2) + (N % 2);
-
-
-        if (N < KARATSUBA_MIN) {
-            return this._multiply(n);
+        if (N < KARATSUBA_THRESHOLD) {
+            return X.multiply(Y);
         }
 
+        BigInteger xl = X.getLow(half);
+        BigInteger xh = X.getHigh(half);
+        BigInteger yl = Y.getLow(half);
+        BigInteger yh = Y.getHigh(half);
+        System.out.println("xl=" + xl);
+        System.out.println("xh=" + xh);
+        System.out.println("yl=" + yl);
+        System.out.println("yh=" + yh);
 
-        BigInteger Xr = this.Low();
-        BigInteger Xl = this.High();
-        BigInteger Yr = n.Low();
-        BigInteger Yl = n.High();
+        BigInteger Xlh = xh.add(xl);
+        BigInteger Ylh = yh.add(yl);
+        System.out.println(xl + "+" + xh + "=" + Xlh);
+        System.out.println(yl + "+" + yh + "=" + Ylh);
 
-        BigInteger Xlr = Xr.add(Xl);
-        BigInteger Ylr = Yr.add(Yl);
 
-        BigInteger P1 = Xl.multiplyKaratsuba(Yl);
-        BigInteger P2 = Xr.multiplyKaratsuba(Yr);
-        BigInteger P3 = Xlr.multiplyKaratsuba(Ylr);
-        BigInteger P4 = P3.subtract(P1).subtract(P2);
+        BigInteger p2 = xl.multiply(yl);
+        BigInteger p1 = xh.multiply(yh);
+        BigInteger p3 = Xlh.multiply(Ylh);
+        System.out.println(xh + "*" + yh + "=" + p1);
+        System.out.println(xl + "*" + yl + "=" + p2);
+        System.out.println(Xlh + "*" + Ylh + "=" + p3);
 
-        // P1 * BASE ^ n + P4 * BASE ^ (n / 2) + P2
+        BigInteger p4 = p3.subtract(p1);
+        p4 = p4.subtract(p2);
+        System.out.println(p3 + "-" + p1 + "-" + p2 + "=" + p4);
 
-        P1.shiftDigitsLeft(N);
-        P4.shiftDigitsLeft(N2);
+        System.out.println("p1=" + p1);
+        System.out.println("p4=" + p4);
+        System.out.println("p2=" + p2);
 
-        product = P1.add(P4).add(P2);
+        p1.shiftDigitsLeft(half * 2);
+        p4.shiftDigitsLeft(half);
+        System.out.println("p1<<" + p1);
+        System.out.println("p4<<" + p4);
+
+        product = p1.add(p4).add(p2);
+
+//        p1.shiftDigitsLeft(half);
+//        product = p1.add(p4);
+//        product.shiftDigitsLeft(half);
+//        product = product.add(p2);
+
+        System.out.println("---end karatsuba---");
 
         return product;
     }
