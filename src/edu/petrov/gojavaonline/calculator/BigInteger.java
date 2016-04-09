@@ -11,11 +11,13 @@ import java.util.List;
 
 public class BigInteger implements Comparable<BigInteger> {
 
+    public static final BigInteger ZERO = new BigInteger();
     private final static int BASE = 1000 * 1000 * 1000;
     private final static String STRING_BASE_VALUE = Integer.toString(BASE);
     private final static int BASE_LENGTH = STRING_BASE_VALUE.length() - 1;
     // Минимальная длина массива разрядов длинного числа, на которой запускать алгоритм Карацубы
-    public final int KARATSUBA_MIN = 2;
+    private static final int KARATSUBA_MIN = 2;
+    private static final BigInteger base = new BigInteger(STRING_BASE_VALUE);
     private final List<Integer> digits = new ArrayList<>();
     private Sign sign = Sign.POSITIVE;
     private int integerRemainder = 0;
@@ -104,6 +106,18 @@ public class BigInteger implements Comparable<BigInteger> {
             } else {
                 break;
             }
+        }
+    }
+
+    private static BigInteger _pow(BigInteger a, BigInteger n) {
+        if (n.isZero()) {
+            return new BigInteger(1);
+        }
+        if (n.mod(2) == 1) {
+            return a._multiply(_pow(a, n.subtract(1)));
+        } else {
+            BigInteger b = _pow(a, n.divide(2));
+            return b._multiply(b);
         }
     }
 
@@ -279,7 +293,7 @@ public class BigInteger implements Comparable<BigInteger> {
         return result;
     }
 
-    private void shiftDigitsLeft(int n) {
+    public void shiftDigitsRight(int n) {
         if (digits.size() == 0) {
             return;
         }
@@ -288,7 +302,7 @@ public class BigInteger implements Comparable<BigInteger> {
         digits.addAll(shiftedDigits);
     }
 
-    private void shiftDigitsRight(int n) {
+    public void shiftDigitsLeft(int n) {
         for (int i = 0; i < n; i++) {
             digits.add(0, 0);
         }
@@ -330,11 +344,9 @@ public class BigInteger implements Comparable<BigInteger> {
     }
 
     public BigInteger multiply(BigInteger val) {
-        /*
-        if (size() >= KARATSUBA_MIN || val.size() >= KARATSUBA_MIN) {
-            return karatsubaMultiply(val);
-        }
-        */
+//        if (size() >= KARATSUBA_MIN || val.size() >= KARATSUBA_MIN) {
+//            return karatsubaMultiply(val);
+//        }
         return _multiply(val);
     }
 
@@ -356,13 +368,20 @@ public class BigInteger implements Comparable<BigInteger> {
      * @param n
      * @return
      */
-    public BigInteger karatsubaMultiply(BigInteger n) {
+    public BigInteger multiplyKaratsuba(BigInteger n) {
         BigInteger product = new BigInteger();
+        BigInteger A = this;
+        BigInteger B = n;
         int N = Math.max(this.size(), n.size());
+        int N2 = (Math.max(this.size(), n.size()) + 1) / 2;
+
+        N = (N / 2) + (N % 2);
+
 
         if (N < KARATSUBA_MIN) {
             return this._multiply(n);
         }
+
 
         BigInteger Xr = this.Low();
         BigInteger Xl = this.High();
@@ -372,27 +391,18 @@ public class BigInteger implements Comparable<BigInteger> {
         BigInteger Xlr = Xr.add(Xl);
         BigInteger Ylr = Yr.add(Yl);
 
-        BigInteger P1 = Xl.karatsubaMultiply(Yl);
-        BigInteger P2 = Xr.karatsubaMultiply(Yr);
-        BigInteger P3 = Xlr.karatsubaMultiply(Ylr);
+        BigInteger P1 = Xl.multiplyKaratsuba(Yl);
+        BigInteger P2 = Xr.multiplyKaratsuba(Yr);
+        BigInteger P3 = Xlr.multiplyKaratsuba(Ylr);
         BigInteger P4 = P3.subtract(P1).subtract(P2);
 
-//        System.out.println("====");
-//        System.out.println("P1="+P1);
-//        System.out.println("P2="+P2);
-//        System.out.println("P3="+P3);
-//        System.out.println("P4="+P4);
-//        System.out.println("====");
+        // P1 * BASE ^ n + P4 * BASE ^ (n / 2) + P2
 
-        // Prod1 * 10 ^ n + (P4) * 10 ^ (n / 2) + P2
+        P1.shiftDigitsLeft(N);
+        P4.shiftDigitsLeft(N2);
 
-        final BigInteger base = new BigInteger(STRING_BASE_VALUE);
-
-        // 65536000000256000000000
-
-        P1.shiftDigitsRight(N);
-        P4.shiftDigitsRight(N / 2);
         product = P1.add(P4).add(P2);
+
         return product;
     }
 
@@ -448,6 +458,11 @@ public class BigInteger implements Comparable<BigInteger> {
     public BigInteger mod(BigInteger divider) {
         BigInteger[] result = divideAndRemainder(divider);
         return result[1];
+    }
+
+    public int mod(int divider) {
+        BigInteger result = divide(divider);
+        return result.integerRemainder;
     }
 
     /**
@@ -528,6 +543,19 @@ public class BigInteger implements Comparable<BigInteger> {
         }
     }
 
+    /*
+
+    int binpow (int a, int n) {
+	if (n == 0)
+		return 1;
+	if (n % 2 == 1)
+		return binpow (a, n-1) * a;
+	else {
+		int b = binpow (a, n/2);
+		return b * b;
+	}
+}
+     */
 
     public BigInteger pow(int a) {
         a = Math.abs(a);
@@ -542,20 +570,8 @@ public class BigInteger implements Comparable<BigInteger> {
         return result;
     }
 
-    public BigInteger pow(BigInteger k/*, BigInteger n*/) {
-        BigInteger a = new BigInteger(this);
-        BigInteger b = new BigInteger(1);
-        while (k.compareTo(0) > 0) {
-            BigInteger Q = k.divide(2);
-            if (Q.integerRemainder == 0) {
-                k = Q;
-                a = a._multiply(a);//.mod(n);// [ a = (a*a)%n; ]
-            } else {
-                k = k.subtract(new BigInteger(1));
-                b = b._multiply(a);//.mod(n);// [ b = (b*a)%n; ]
-            }
-        }
-        return b;
+    public BigInteger pow(BigInteger n) {
+        return _pow(this, n);
     }
 
     private void addDigit(int digit) {
@@ -591,6 +607,10 @@ public class BigInteger implements Comparable<BigInteger> {
             result.addDigit((int) sum);
         }
         return result;
+    }
+
+    public BigInteger subtract(final int val) {
+        return subtract(new BigInteger("1"));
     }
 
     public BigInteger subtract(final BigInteger arg) {
@@ -647,7 +667,7 @@ public class BigInteger implements Comparable<BigInteger> {
             return "0";
         StringBuilder result = new StringBuilder();
         for (int i = digits.size() - 1; i >= 0; i--) {
-            if (i == digits.size() - 1) {
+            if (i == digits.size() - 1 && digits.get(i) != 0) {
                 result.append(String.format("%d", digits.get(i)));
             } else {
                 result.append(String.format("%0" + BASE_LENGTH + "d", digits.get(i)));

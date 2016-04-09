@@ -6,81 +6,34 @@ package edu.petrov.gojavaonline.calculator;
 
 public class Calculator {
 
-    private static String A = "910463872391046387239104638723";
-    private static String B = "1850009341";
+    private static String A = "911234567100000000000000000";
+    private static String B = "123456789112345689123456789112345671";
 
-    private static String C = "9448154591";
-    private static String D = "3441123441";
-
-
-    private static String T1 = "3000000000";
-    private static String T2 = "3000000000";
-
-    private static java.math.BigInteger bigIntegerA = new java.math.BigInteger(A);
-    private static java.math.BigInteger bigIntegerB = new java.math.BigInteger(B);
-    private static java.math.BigInteger bigIntegerC = new java.math.BigInteger(C);
-    private static java.math.BigInteger bigIntegerD = new java.math.BigInteger(D);
-
-    private static BigInteger a = BigInteger.parseBigInteger(A);
-    private static BigInteger b = BigInteger.parseBigInteger(B);
-    private static BigInteger c = new BigInteger(C);
-    private static BigInteger d = new BigInteger(D);
-
-    private static BigInteger t1 = new BigInteger(T1);
-    private static BigInteger t2 = new BigInteger(T2);
+    private static BigInteger a = new BigInteger(A);
+    private static BigInteger b = new BigInteger(B);
 
 
     public static void main(String[] args) {
+//        System.out.println(new BigInteger(T1).karatsubaMultiply(new BigInteger(T2)));
+//        System.out.println(t1.multiply(t2));
 
 
-//        System.out.println(bigIntegerA.shiftLeft(1));
+        System.out.println(a.Low());
+        System.out.println(a.High());
 
+        System.out.println(new BigInteger(A).multiplyKaratsuba(new BigInteger(B)));
+        System.out.println(new BigInteger(A).multiply(new BigInteger(B)));
 
-//        System.out.format("%s * %s = %s\n", t1, t2, t1.multiply(t2));
+        BigInteger b = new BigInteger("233333333332323123123123124355");
+        b.shiftDigitsLeft(3);
+        System.out.println(b);
 
-//        System.out.format("%s * %s = %s\n", bigIntegerA, bigIntegerB, bigIntegerA.multiply(bigIntegerB));
-//        System.out.format("%s * %s = %s\n", a, b, a.multiply(b));
-
-        System.out.format("\t%s * %s = %s\n", bigIntegerC, bigIntegerD, bigIntegerC.multiply(bigIntegerD));
-        System.out.format("\t%s * %s = %s\n", c, d, c.multiply(d));
-        System.out.format("\t%s * %s = %s\n", c, d, c.karatsubaMultiply(d));
-//
-//        System.out.format("%s / %s = %s\n", bigIntegerC, bigIntegerD, bigIntegerC.divide(bigIntegerD));
-//        System.out.format("%s / %s = %s\n", c, d, c.divide(d));
-
-        final int divider = 23847823;
-
-//        System.out.format("%s / %d = %s\n", bigIntegerA, divider, bigIntegerA.divide(new java.math.BigInteger(Integer.toString(divider))));
-//        System.out.format("%s / %d = %s\n", a, divider, a.divide(divider));
-////
-//        System.out.format("%s / %s = %s\n", bigIntegerA, bigIntegerB, Arrays.toString(bigIntegerA.divideAndRemainder(bigIntegerB)));
-//        System.out.format("%s / %s = %s\n", a, b, Arrays.toString(a.divideAndRemainder(b)));
-//
-
-//        System.out.println(new BigInteger("9879876956785745665487600").pow(10));
-
-//        System.out.println(new BigInteger("900000000").multiply(new BigInteger("3")));
-
-
-        System.out.println(new BigInteger("1").divide(2));
-
-        System.out.println(new BigInteger("256000000000")
-                .karatsubaMultiply(new BigInteger("256000000001")));
-        System.out.println(new BigInteger("256000000000")
-                .multiply(new BigInteger("256000000001")));
-
-
-        //System.out.println(new BigInteger("400000000000000000000").pow(new BigInteger("4")));
-
-
-        final BigInteger testBigInteger = new BigInteger("40000000000000001");
-        final BigInteger testBigInteger2 = new BigInteger("4000000000");
-
-//
-//        System.out.println("multiply");
-//        System.out.println(testBigInteger.multiply(testBigInteger).multiply(testBigInteger));
-//        System.out.println("karatsubaMultiply");
-//        System.out.println(testBigInteger.karatsubaMultiply(testBigInteger).karatsubaMultiply(testBigInteger));
+//        System.out.println(new BigInteger(T1).add(new BigInteger(T2)));
+//        System.out.println(t1.add(t2));
     }
 }
 
+/*
+
+
+*/
