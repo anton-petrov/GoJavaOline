@@ -32,7 +32,8 @@ public class BigInteger extends Number implements Comparable<BigInteger> {
     }
 
     public BigInteger(int intValue) {
-        parse(String.valueOf(intValue));
+        digits.clear();
+        setDigit(0, intValue);
     }
 
     public BigInteger(BigInteger bigInteger) {
