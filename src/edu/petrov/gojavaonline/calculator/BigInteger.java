@@ -4,19 +4,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by anton on 05/04/16.
+ * @author Anton Petrov, 2016
+ * @version 1.0
+ * BigInteger, represents integers, that does not fit at standard primitive types.
  * BigInteger is immutable type.
  */
 
-public class BigInteger implements Comparable<BigInteger> {
+public class BigInteger extends Number implements Comparable<BigInteger> {
 
     public static final BigInteger ZERO = new BigInteger();
-    private final static int BASE = 10; //1000 * 1000 * 1000;
+    private final static int BASE = 1000 * 1000 * 1000;
     private final static String STRING_BASE_VALUE = Integer.toString(BASE);
     private final static int BASE_LENGTH = STRING_BASE_VALUE.length() - 1;
-    // Минимальная длина массива разрядов длинного числа, на которой запускать алгоритм Карацубы
-    private static final int KARATSUBA_THRESHOLD = 2;
+    // Mininum length of digits to run Karatsuba algorithm
+    private static final int KARATSUBA_THRESHOLD = 64;
     private static final BigInteger base = new BigInteger(STRING_BASE_VALUE);
+    private static final BigInteger ONE = new BigInteger(1);
     private final List<Integer> digits = new ArrayList<>();
     private Sign sign = Sign.POSITIVE;
     private int integerRemainder = 0;
@@ -51,25 +54,10 @@ public class BigInteger implements Comparable<BigInteger> {
         }
     }
 
-//    private static void removeLeadingZeroes(BigInteger bigInteger) {
-//        // remove leading zeroes
-//        for (int i = bigInteger.size() - 1; i >= 1; i--) {
-//            if (bigInteger.getDigit(bigInteger.size() - 1) == 0) {
-//                bigInteger.removeDigit(bigInteger.size() - 1);
-//            } else {
-//                break;
-//            }
-//        }
-//    }
-
     /**
-     * Пример:
-     * Входная строка "123456789987654321" будет преобразована в массив 0->987654321, 1->123456789
-     * Таким образом, разряды идут слева направо от младших к старшим. В каждом элементе хранится один разряд
-     * по основанию миллиард, максимально содержащий 9 десятичных знаков.
-     *
+     * Convert String to BigInteger
      * @param stringValue
-     * @return Большое целое число
+     * @return BigInteger
      */
     public static BigInteger parseBigInteger(String stringValue) throws NumberFormatException {
 
@@ -78,7 +66,6 @@ public class BigInteger implements Comparable<BigInteger> {
         }
 
         BigInteger result = new BigInteger();
-
         // sign parsing
         result.setSign(stringValue.charAt(0) == '-' ? Sign.NEGATIVE : Sign.POSITIVE);
         if (result.getSign() == Sign.NEGATIVE) {
@@ -117,6 +104,23 @@ public class BigInteger implements Comparable<BigInteger> {
         } else {
             BigInteger b = _pow(a, n.divide(2));
             return b._multiply(b);
+        }
+    }
+
+    private static BigInteger sqrtFunction(final BigInteger a, final BigInteger b, int s, int n) {
+        int r = 0;
+        BigInteger result = (b.add(a.divide(b))).divide(2);
+        if (s >= n || result.subtract(b).compareTo(BigInteger.ONE) == 0) {
+            return result;
+        }
+        return sqrtFunction(a, result, s + 1, n);
+    }
+
+    public static BigInteger gcd(BigInteger a, BigInteger b) {
+        if (b.isZero()) {
+            return a;
+        } else {
+            return gcd(b, a.mod(b));
         }
     }
 
@@ -167,8 +171,19 @@ public class BigInteger implements Comparable<BigInteger> {
         return compare;
     }
 
+    @Override
     public long longValue() {
         return getDigit(0) + getDigit(1) * BASE;
+    }
+
+    @Override
+    public float floatValue() {
+        return longValue();
+    }
+
+    @Override
+    public double doubleValue() {
+        return longValue();
     }
 
     public int intValue() {
@@ -213,14 +228,22 @@ public class BigInteger implements Comparable<BigInteger> {
     }
 
     /**
-     * Получить десятичную цифру длинного числа.
+     * Get decimal n<sup>th</sup> digit.
      *
-     * @param i Позиция десятичной цифры
-     * @return Возвращает десятичную цифру от 0 до 9
+     * @param i number of digit.
+     * @return decimal form 0 to 9.
      */
     public int getNumeral(int i) {
         if (size() == 0) {
             return 0;
+        }
+        String bigIntegerString = toString();
+        if (getSign() == Sign.NEGATIVE) {
+            bigIntegerString = bigIntegerString.substring(1);
+        }
+
+        if (i < bigIntegerString.length() && i >= 0) {
+            return Character.getNumericValue(bigIntegerString.charAt(i));
         }
 
         return 0;
@@ -228,10 +251,6 @@ public class BigInteger implements Comparable<BigInteger> {
 
     public int numeralCount() {
         return getSign() == Sign.POSITIVE ? this.toString().length() : this.toString().length() - 1;
-    }
-
-    private int halfSize() {
-        return digits.size() / 2;
     }
 
     public Sign getSign() {
@@ -270,8 +289,6 @@ public class BigInteger implements Comparable<BigInteger> {
             return new BigInteger(digits.subList(0, n));
         }
     }
-// 1  2  0
-//[0][1][2]
 
     public BigInteger getHigh(int n) {
         if (size() == 0) {
@@ -307,14 +324,11 @@ public class BigInteger implements Comparable<BigInteger> {
         }
         for (int i = 0; i < n; i++) {
             digits.add(0, 0);
-            //digits.remove(digits.size()-1);
         }
     }
 
     /**
-     * Количество разрядов (размер массива digits)
-     *
-     * @return
+     * @return Count of digits ( digits.size() )
      */
     private int size() {
         return digits.size();
@@ -347,11 +361,11 @@ public class BigInteger implements Comparable<BigInteger> {
     }
 
     public BigInteger multiply(BigInteger val) {
-//        if (size() >= KARATSUBA_THRESHOLD || val.size() >= KARATSUBA_THRESHOLD) {
-//            return multiplyKaratsuba(val);
-//        } else {
+        if (size() >= KARATSUBA_THRESHOLD || val.size() >= KARATSUBA_THRESHOLD) {
+            return multiplyKaratsuba(val);
+        } else {
         return _multiply(val);
-//        }
+        }
     }
 
     public BigInteger multiply(int val) {
@@ -367,27 +381,20 @@ public class BigInteger implements Comparable<BigInteger> {
     }
 
     /**
-     * Алгоритм умножения Карацубы. Работает эффективно на очень больших числах.
-     *
+     * Implementation of Karatsuba algorithm.
+     * Time complexity of the above solution is O(n<sup>1.59</sup>).
      * @param n
      * @return
      */
     public BigInteger multiplyKaratsuba(BigInteger n) {
-        System.out.println("---begin karatsuba---");
-        BigInteger product = new BigInteger();
+        BigInteger product;
         BigInteger X = this;
         BigInteger Y = n;
         int xlen = X.size();
         int ylen = Y.size();
 
-
-        int N = Math.max(this.size(), n.size());
-        int half = (Math.max(xlen, ylen) + 1) / 2;
-        System.out.println("N = " + N);
-        System.out.println("Нижняя граница [n/2] * 2 = " + (int) (2 * Math.floor(N / 2.0)));
-        System.out.println("Нижняя граница [n/2] = " + (int) Math.floor(N / 2.0));
-        System.out.println("half * 2 = " + half * 2);
-        System.out.println("half = " + half);
+        int N = Math.max(xlen, ylen);
+        int half = (N + 1) / 2;
 
         if (N < KARATSUBA_THRESHOLD) {
             return X.multiply(Y);
@@ -397,45 +404,21 @@ public class BigInteger implements Comparable<BigInteger> {
         BigInteger xh = X.getHigh(half);
         BigInteger yl = Y.getLow(half);
         BigInteger yh = Y.getHigh(half);
-        System.out.println("xl=" + xl);
-        System.out.println("xh=" + xh);
-        System.out.println("yl=" + yl);
-        System.out.println("yh=" + yh);
 
         BigInteger Xlh = xh.add(xl);
         BigInteger Ylh = yh.add(yl);
-        System.out.println(xl + "+" + xh + "=" + Xlh);
-        System.out.println(yl + "+" + yh + "=" + Ylh);
 
-
-        BigInteger p2 = xl.multiply(yl);
-        BigInteger p1 = xh.multiply(yh);
-        BigInteger p3 = Xlh.multiply(Ylh);
-        System.out.println(xh + "*" + yh + "=" + p1);
-        System.out.println(xl + "*" + yl + "=" + p2);
-        System.out.println(Xlh + "*" + Ylh + "=" + p3);
+        BigInteger p2 = xl.multiplyKaratsuba(yl);
+        BigInteger p1 = xh.multiplyKaratsuba(yh);
+        BigInteger p3 = Xlh.multiplyKaratsuba(Ylh);
 
         BigInteger p4 = p3.subtract(p1);
         p4 = p4.subtract(p2);
-        System.out.println(p3 + "-" + p1 + "-" + p2 + "=" + p4);
-
-        System.out.println("p1=" + p1);
-        System.out.println("p4=" + p4);
-        System.out.println("p2=" + p2);
 
         p1.shiftDigitsLeft(half * 2);
         p4.shiftDigitsLeft(half);
-        System.out.println("p1<<" + p1);
-        System.out.println("p4<<" + p4);
 
         product = p1.add(p4).add(p2);
-
-//        p1.shiftDigitsLeft(half);
-//        product = p1.add(p4);
-//        product.shiftDigitsLeft(half);
-//        product = product.add(p2);
-
-        System.out.println("---end karatsuba---");
 
         return product;
     }
@@ -460,7 +443,7 @@ public class BigInteger implements Comparable<BigInteger> {
         return result;
     }
 
-    // Naive method
+    // Naive division method - VERY slow.
     @Deprecated
     public BigInteger divideClassic(BigInteger arg) {
         BigInteger counter = new BigInteger();
@@ -475,6 +458,10 @@ public class BigInteger implements Comparable<BigInteger> {
             counter.setSign(Sign.NEGATIVE);
         }
         return counter;
+    }
+
+    public BigInteger sqrt(final BigInteger value) {
+        return sqrtFunction(this, value, 1, 1000);
     }
 
     public boolean isZero() {
@@ -499,16 +486,16 @@ public class BigInteger implements Comparable<BigInteger> {
         return result.integerRemainder;
     }
 
-    /**
-     * Fast Knuth divide algorithm
-     */
     public BigInteger divide(BigInteger divider) {
         BigInteger[] result = divideAndRemainder(divider);
         result[0].computeSignForMulDiv(divider);
         return result[0];
     }
 
-    public BigInteger[] divideAndRemainder(BigInteger divider) throws ArithmeticException {
+    /**
+     * Fast Knuth divide algorithm.
+     */
+    public BigInteger[] divideAndRemainder(BigInteger divider) throws IllegalArgumentException {
 
         if (divider.isZero()) {
             throw new IllegalArgumentException("Divide by zero!");
@@ -566,7 +553,7 @@ public class BigInteger implements Comparable<BigInteger> {
 
         }
         removeLeadingZeroes(q.digits);
-        // остаток от деления
+        // calculate remainder
         r = this.subtract(q.multiply(divider));
         return new BigInteger[]{q, r};
     }
@@ -576,20 +563,6 @@ public class BigInteger implements Comparable<BigInteger> {
             digits.remove(index);
         }
     }
-
-    /*
-
-    int binpow (int a, int n) {
-	if (n == 0)
-		return 1;
-	if (n % 2 == 1)
-		return binpow (a, n-1) * a;
-	else {
-		int b = binpow (a, n/2);
-		return b * b;
-	}
-}
-     */
 
     public BigInteger pow(int a) {
         a = Math.abs(a);
@@ -620,20 +593,20 @@ public class BigInteger implements Comparable<BigInteger> {
         return new BigInteger(1).add(this);
     }
 
-    public BigInteger add(final BigInteger arg) {
-        if (this.getSign() == Sign.POSITIVE && arg.getSign() == Sign.NEGATIVE) {
-            return subtract(arg);
-        } else if (this.getSign() == Sign.NEGATIVE && arg.getSign() == Sign.POSITIVE) {
-            return arg.subtract(this);
+    public BigInteger add(final BigInteger value) {
+        if (this.getSign() == Sign.POSITIVE && value.getSign() == Sign.NEGATIVE) {
+            return subtract(value);
+        } else if (this.getSign() == Sign.NEGATIVE && value.getSign() == Sign.POSITIVE) {
+            return value.subtract(this);
         }
         long carry = -1;
         final BigInteger result = new BigInteger();
-        for (int i = 0; i < Math.max(this.size(), arg.size()) || carry >= 0; i++) {
+        for (int i = 0; i < Math.max(this.size(), value.size()) || carry >= 0; i++) {
             long sum = 0;
             if (carry >= 0) {
                 sum += 1;
             }
-            sum += i < arg.size() ? arg.digits.get(i) : 0;
+            sum += i < value.size() ? value.digits.get(i) : 0;
             sum += i < this.size() ? this.digits.get(i) : 0;
             carry = sum - BASE;
             if (carry >= 0)
@@ -647,18 +620,16 @@ public class BigInteger implements Comparable<BigInteger> {
         return subtract(new BigInteger("1"));
     }
 
-    public BigInteger subtract(final BigInteger arg) {
-
+    public BigInteger subtract(final BigInteger value) {
         BigInteger result = new BigInteger();
-        // this - arg
-        // b - a
-        BigInteger a = new BigInteger(arg);
+        BigInteger a = new BigInteger(value);
         BigInteger b = new BigInteger(this);
-        if (b.compareTo(a) == 0) {
+
+        if (b.absCompareTo(a) == 0) {
             return new BigInteger();
         }
         if (b.getSign() == Sign.POSITIVE && a.getSign() == Sign.POSITIVE) {
-            if (b.compareTo(a) < 0) {
+            if (b.absCompareTo(a) < 0) {
                 BigInteger t = a;
                 a = b;
                 b = t;
@@ -667,15 +638,18 @@ public class BigInteger implements Comparable<BigInteger> {
         } else if (b.getSign() == Sign.POSITIVE && a.getSign() == Sign.NEGATIVE) {
             return b.add(a.abs());
         } else if (b.getSign() == Sign.NEGATIVE && a.getSign() == Sign.POSITIVE) {
-            result = a.add(b.abs());
+            a.setSign(Sign.POSITIVE);
+            b.setSign(Sign.POSITIVE);
+            result = a.add(b);
             result.setSign(Sign.NEGATIVE);
             return result;
         } else if (b.getSign() == Sign.NEGATIVE && a.getSign() == Sign.NEGATIVE) {
             a.setSign(Sign.POSITIVE);
+            b.setSign(Sign.POSITIVE);
             return a.subtract(b);
         }
 
-        // diff = a - b, a >=, b >= 0, a > b
+        // diff = b - a, a >= 0, b >= 0, a > b
         for (int i = 0, carry = 0; i < b.size() || carry == 1; i++) {
 
             int diff = -carry;
@@ -694,7 +668,6 @@ public class BigInteger implements Comparable<BigInteger> {
         return result;
     }
 
-
     @Override
     public String toString() {
         if (digits.size() == 0)
@@ -708,6 +681,24 @@ public class BigInteger implements Comparable<BigInteger> {
             }
         }
         return (sign == Sign.NEGATIVE ? "-" : "") + result.toString();
+    }
+
+    /**
+     * Returns String value of this BigInteger.
+     *
+     * @param width
+     * @return formatted representation with specified <b>width</b>
+     */
+    public String stringValue(int width) {
+        String value = toString();
+        StringBuilder result = new StringBuilder();
+        width = Math.min(width, value.length());
+        int i;
+        for (i = 0; i < value.length() - width; i += width) {
+            result.append(String.format("%s\n", value.substring(i, i + width)));
+        }
+        result.append(value.substring(i, value.length()));
+        return result.toString();
     }
 
     @Override

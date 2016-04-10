@@ -1,9 +1,5 @@
 package edu.petrov.gojavaonline.calculator;
 
-/**
- * Created by anton on 05/04/16.
- */
-
 public class Calculator {
 
     private static String A = "1234530";
@@ -17,19 +13,11 @@ public class Calculator {
 
     public static void main(String[] args) {
 
-//        System.out.println(new BigInteger("-123").subtract(new BigInteger("23")));
+        System.out.println(new BigInteger("10").subtract(new BigInteger("2000000000")) + "\n");
 
-//        System.out.println("a = " + a);
-//        System.out.println("a.Low() = " + a.getLow());
-//        System.out.println("a.High() = " + a.getHigh());
-//
         System.out.println(new BigInteger(A).multiplyKaratsuba(new BigInteger(B)));
         System.out.println(new BigInteger(A).multiply(new BigInteger(B)));
 
+        System.out.println(new BigInteger("123456789123456789123456789123456789123456789123456789123456789123456789123456789").stringValue(25));
     }
 }
-
-/*
-
-
-*/
