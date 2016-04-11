@@ -5,7 +5,7 @@ import java.util.List;
 
 /**
  * @author Anton Petrov, 2016
- * @version 1.0
+ * @version 1.01
  * BigInteger, represents integers, that does not fit at standard primitive types.
  * BigInteger is immutable type.
  */
@@ -20,9 +20,10 @@ public class BigInteger extends Number implements Comparable<BigInteger> {
     private static final int KARATSUBA_THRESHOLD = 64;
     private static final BigInteger base = new BigInteger(STRING_BASE_VALUE);
     private static final BigInteger ONE = new BigInteger(1);
+    private static final int nBits = 30;
     private final List<Integer> digits = new ArrayList<>();
     private Sign sign = Sign.POSITIVE;
-    private int integerRemainder = 0;
+    private int remainder = 0;
 
     public BigInteger() {
     }
@@ -32,17 +33,19 @@ public class BigInteger extends Number implements Comparable<BigInteger> {
     }
 
     public BigInteger(int intValue) {
-        digits.clear();
-        setDigit(0, intValue);
+        if (intValue > 0) {
+            digits.clear();
+            setDigit(0, intValue);
+        }
     }
 
     public BigInteger(BigInteger bigInteger) {
         assign(bigInteger);
     }
-
     private BigInteger(List<Integer> integerList) {
         digits.addAll(integerList);
     }
+
     private BigInteger(Integer[] array) {
         for (int i = 0; i < array.length; i++) {
             digits.add(array[i]);
@@ -123,6 +126,57 @@ public class BigInteger extends Number implements Comparable<BigInteger> {
         } else {
             return gcd(b, a.mod(b));
         }
+    }
+
+    /**
+     * Returns right part of the integer value <b>a</b>
+     *
+     * @param a 30-bit integer
+     * @param r number of bits
+     */
+    private static int right(int a, int r) {
+        return ~(a << (31 - r)) >> (31 - r * 2);
+    }
+
+    /**
+     * Returns right part of the integer value <b>a</b>
+     *
+     * @param a 30-bit integer
+     * @param r number of bits
+     */
+    private static int right_shifted_left(int a, int r) {
+        return ~(a << (31 - r)) >> 1;
+    }
+
+    /**
+     * Returns left part of the integer value <b>a</b>
+     *
+     * @param a 30-bit integer
+     * @param l number of bits
+     */
+    private static int left(int a, int l) {
+        return (a >> (nBits - l)) << (nBits - l);
+    }
+
+    /**
+     * Returns left part of the integer value shifted right <b>a</b>
+     *
+     * @param a 30-bit integer
+     * @param l number of bits
+     */
+    private static int left_shifted_right(int a, int l) {
+        return a >> (30 - l);
+    }
+
+    private static String intToBin(int i) {
+        String bin = "";
+        //int t = 31;
+        do {
+            bin = (i % 2) + bin;
+            i /= 2;
+            //    t--;
+        } while (i > 0 /*|| t > 0*/);
+        return bin;
     }
 
     public BigInteger assign(BigInteger bigInteger) {
@@ -434,7 +488,7 @@ public class BigInteger extends Number implements Comparable<BigInteger> {
         }
         removeLeadingZeroes(result.digits);
         setSign(computeSignForMulDiv(divider));
-        result.integerRemainder = remainder;
+        result.remainder = remainder;
         return result;
     }
 
@@ -470,10 +524,16 @@ public class BigInteger extends Number implements Comparable<BigInteger> {
     }
 
     public BigInteger shiftLeft(int n) {
+        if (size() == 0 || n <= 0) {
+            return new BigInteger(0);
+        }
         return new BigInteger(this).multiply((int) Math.pow(2, n));
     }
 
     public BigInteger shiftRight(int n) {
+        if (size() == 0 || n <= 0) {
+            return new BigInteger(0);
+        }
         return new BigInteger(this).divide((int) Math.pow(2, n));
     }
 
@@ -484,7 +544,7 @@ public class BigInteger extends Number implements Comparable<BigInteger> {
 
     public int mod(int divider) {
         BigInteger result = divide(divider);
-        return result.integerRemainder;
+        return result.remainder;
     }
 
     public BigInteger divide(BigInteger divider) {
@@ -618,7 +678,7 @@ public class BigInteger extends Number implements Comparable<BigInteger> {
     }
 
     public BigInteger subtract(final int val) {
-        return subtract(new BigInteger("1"));
+        return subtract(new BigInteger(val));
     }
 
     public BigInteger subtract(final BigInteger value) {
@@ -700,6 +760,21 @@ public class BigInteger extends Number implements Comparable<BigInteger> {
         }
         result.append(value.substring(i, value.length()));
         return result.toString();
+    }
+
+    /**
+     * Returns Binary String value of this BigInteger.
+     *
+     * @return binary representation, supported only positive numbers, not complementary code.
+     */
+    public String binaryValue() {
+        if (digits.size() == 0)
+            return "0";
+        StringBuilder result = new StringBuilder();
+        for (int i = digits.size() - 1; i >= 0; i--) {
+            result.append(String.format("%s%s", intToBin(digits.get(i)), result.toString()));
+        }
+        return (sign == Sign.NEGATIVE ? "-" : "") + result.toString();
     }
 
     @Override
