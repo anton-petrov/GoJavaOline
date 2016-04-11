@@ -99,18 +99,6 @@ public class BigInteger extends Number implements Comparable<BigInteger> {
         }
     }
 
-    private static BigInteger _pow(BigInteger a, BigInteger n) {
-        if (n.isZero()) {
-            return new BigInteger(1);
-        }
-        if (n.mod(2) == 1) {
-            return a._multiply(_pow(a, n.subtract(1)));
-        } else {
-            BigInteger b = _pow(a, n.divide(2));
-            return b._multiply(b);
-        }
-    }
-
     private static BigInteger sqrtFunction(final BigInteger a, final BigInteger b, int s, int n) {
         int r = 0;
         BigInteger result = (b.add(a.divide(b))).divide(2);
@@ -177,6 +165,18 @@ public class BigInteger extends Number implements Comparable<BigInteger> {
             //    t--;
         } while (i > 0 /*|| t > 0*/);
         return bin;
+    }
+
+    private static BigInteger _pow(BigInteger a, BigInteger n) {
+        if (n.isZero()) {
+            return new BigInteger(1);
+        }
+        if (n.mod(2) == 1) {
+            return a.multiply(_pow(a, n.subtract(1)));
+        } else {
+            BigInteger b = _pow(a, n.divide(2));
+            return a.multiply(b);
+        }
     }
 
     public BigInteger assign(BigInteger bigInteger) {
