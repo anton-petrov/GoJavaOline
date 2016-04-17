@@ -179,6 +179,17 @@ public class BigInteger extends Number implements Comparable<BigInteger> {
         }
     }
 
+    public static BigInteger factorial(BigInteger n) {
+        BigInteger result = BigInteger.ONE;
+
+        while (!n.equals(BigInteger.ZERO)) {
+            result = result.multiply(n);
+            n = n.subtract(BigInteger.ONE);
+        }
+
+        return result;
+    }
+
     public BigInteger assign(BigInteger bigInteger) {
         digits.clear();
         digits.addAll(bigInteger.digits);
@@ -385,7 +396,7 @@ public class BigInteger extends Number implements Comparable<BigInteger> {
     /**
      * @return Count of digits ( digits.size() )
      */
-    private int size() {
+    public int size() {
         return digits.size();
     }
 
@@ -733,9 +744,10 @@ public class BigInteger extends Number implements Comparable<BigInteger> {
     public String toString() {
         if (digits.size() == 0)
             return "0";
+
         StringBuilder result = new StringBuilder();
         for (int i = digits.size() - 1; i >= 0; i--) {
-            if (i == digits.size() - 1 && digits.get(i) != 0) {
+            if (i == digits.size() - 1 /*&& digits.get(i) != 0*/) {
                 result.append(String.format("%d", digits.get(i)));
             } else {
                 result.append(String.format("%0" + BASE_LENGTH + "d", digits.get(i)));
