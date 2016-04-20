@@ -175,18 +175,17 @@ public class BigInteger extends Number implements Comparable<BigInteger> {
             return a.multiply(_pow(a, n.subtract(1)));
         } else {
             BigInteger b = _pow(a, n.divide(2));
-            return a.multiply(b);
+            return b.multiply(b);
         }
     }
 
-    public static BigInteger factorial(BigInteger n) {
+    public BigInteger factorial() {
         BigInteger result = BigInteger.ONE;
-
+        BigInteger n = new BigInteger(this);
         while (!n.equals(BigInteger.ZERO)) {
             result = result.multiply(n);
             n = n.subtract(BigInteger.ONE);
         }
-
         return result;
     }
 
@@ -643,7 +642,7 @@ public class BigInteger extends Number implements Comparable<BigInteger> {
         }
         BigInteger result = new BigInteger(this);
         while (a > 1) {
-            result = result._multiply(result);
+            result = result._multiply(this);
             a--;
         }
         return result;

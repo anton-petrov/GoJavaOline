@@ -17,10 +17,11 @@ public class Calculator {
 //        System.out.format("%s / %s = %s\n", a, 2, a.divide(new BigInteger(2)));
 //        System.out.format("%s^16=%s\n", a, a.pow(new BigInteger("16")));
 
-        final BigInteger bigInteger = new BigInteger("000000000");
+        final BigInteger bigInteger = new BigInteger("10");
 
 
-        System.out.println(bigInteger);
+        // System.out.println(bigInteger.pow(new BigInteger("10000")));
+        System.out.println(bigInteger.pow(100000).toString().length());
 
     }
 }
