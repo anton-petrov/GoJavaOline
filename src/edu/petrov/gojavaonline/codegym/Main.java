@@ -75,6 +75,8 @@ class MatrixTraversal {
 
         while (c != n*m-1)
         {
+            if (c >= n*m-1) break;
+
             while (j < w)
             {
                 output[c++] = input[i][j];
