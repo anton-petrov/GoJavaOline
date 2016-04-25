@@ -112,25 +112,20 @@ class MatrixTraversal {
     }
 }
 
+class FindMaxNumber {
+    public int max(int[] input) {
+        int max = Integer.MIN_VALUE;
+        for (int i = 0; i < input.length; i++) {
+            if (max < input[i]) {
+                max = input[i];
+            }
+        }
+        return max;
+    }
+}
 
 public class Main {
     public static void main(String[] args) {
-//        System.out.println(new JoinCharacters().join(new char[]{'1', '2', '3'}));
-        System.out.println(new MatrixTraversal().print(
-                new int[][]
-                        {
-                                {1, 2},
-                                {3, 4}
-                        }
 
-        ));
-//        System.out.println(new FirstOddNumber().find(new int[]{1, 1, 2, 2, 3}));
-//        System.out.println(new MatrixSnakeTraversal().print(new int[][]
-//                {
-//                        {1, 1, 2},
-//                        {3, 3, 4},
-//                        {5, 5, 6}
-//                }));
-//        System.out.println(new SumDigits().sum(123));
     }
 }
