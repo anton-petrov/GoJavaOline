@@ -124,8 +124,27 @@ class FindMaxNumber {
     }
 }
 
+class AddBinary {
+    String add(String a, String b) {
+        String sum = "";
+        int i = a.length()-1;
+        int j = b.length()-1;
+        int c = 0;
+        while (i >= 0 || j >= 0 || c > 0) {
+            int ai = i >= 0 ? (a.charAt(i) == '1' ? 1 : 0) : 0;
+            int bj = j >= 0 ? (b.charAt(j) == '1' ? 1 : 0) : 0;
+            int s = (ai + bj + c) % 2;
+            sum = s + sum;
+            c = (ai + bj + c) / 2;
+            i--;
+            j--;
+        }
+        return sum;
+    }
+}
+
 public class Main {
     public static void main(String[] args) {
-
+        System.out.println(new AddBinary().add("11111111", "0"));
     }
 }
