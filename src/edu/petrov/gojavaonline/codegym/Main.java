@@ -1,5 +1,7 @@
 package edu.petrov.gojavaonline.codegym;
 
+import java.math.BigInteger;
+
 class JoinCharacters {
     public int join(char[] input) {
         int output = 0;
@@ -124,6 +126,31 @@ class FindMaxNumber {
     }
 }
 
+class AddNumberBase36 {
+
+    public static String add(String a, String b) {
+
+        a = a.toLowerCase();
+        b = b.toLowerCase();
+
+        String result = "";
+        int i = a.length() - 1;
+        int j = b.length() - 1;
+        int c = 0;
+        while (i >= 0 || j >= 0 || c > 0) {
+
+            byte ar = i >= 0 ? Byte.parseByte(String.valueOf(a.charAt(i)), 36) : 0;
+            byte br = j >= 0 ? Byte.parseByte(String.valueOf(b.charAt(j)), 36) : 0;
+            result = Integer.toString((ar + br + c) % 36, 36) + result;
+            c = (ar + br + c) / 36;
+            i--;
+            j--;
+        }
+
+        return result;
+    }
+}
+
 class AddBinary {
     String add(String a, String b) {
         String sum = "";
@@ -145,6 +172,15 @@ class AddBinary {
 
 public class Main {
     public static void main(String[] args) {
+        BigInteger b1 = new BigInteger("zjfghfhdsdfathjjhgjhghjfjfjhjhdsrreqqklhu456hfz5", 36);
+        BigInteger b2 = new BigInteger("wsfgsgds56346263fgfhghfghfhgfsrr5476hjfgdhdhg3N", 36);
+
+        System.out.println(b1.add(b2).toString(36));
+
+        System.out.println(AddNumberBase36.add("zjfghfhdsdfathjjhgjhghjfjfjhjhdsrreqqklhu456hfz5",
+                "wsfgsgds56346263fgfhghfghfhgfsrr5476hjfgdhdhg3N"));
+
+        System.out.println(Integer.toString(Integer.parseInt("z", 36) + Integer.parseInt("z", 36), 36));
         System.out.println(new AddBinary().add("11111111", "0"));
     }
 }

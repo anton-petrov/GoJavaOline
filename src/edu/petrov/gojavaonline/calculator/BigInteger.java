@@ -33,9 +33,11 @@ public class BigInteger extends Number implements Comparable<BigInteger> {
     }
 
     public BigInteger(int intValue) {
-        if (intValue > 0) {
+        if (intValue != 0) {
             digits.clear();
-            setDigit(0, intValue);
+            setDigit(0, Math.abs(intValue));
+            if (intValue < 0)
+                setSign(Sign.NEGATIVE);
         }
     }
 
@@ -668,7 +670,9 @@ public class BigInteger extends Number implements Comparable<BigInteger> {
         if (this.getSign() == Sign.POSITIVE && value.getSign() == Sign.NEGATIVE) {
             return subtract(value);
         } else if (this.getSign() == Sign.NEGATIVE && value.getSign() == Sign.POSITIVE) {
-            return value.subtract(this);
+            BigInteger tmp = new BigInteger(this);
+            tmp.setSign(Sign.POSITIVE);
+            return value.subtract(tmp);
         }
         long carry = -1;
         final BigInteger result = new BigInteger();
