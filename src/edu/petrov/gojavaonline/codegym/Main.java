@@ -170,7 +170,18 @@ class AddBinary {
     }
 }
 
+
 public class Main {
+
+    public static int setBit(int value, int n) {
+        return value = value | (1 << n);
+    }
+
+    public static int unsetBit(int value, int n) {
+        return value = value & ~(1 << n);
+    }
+
+
     public static void main(String[] args) {
         BigInteger b1 = new BigInteger("zjfghfhdsdfathjjhgjhghjfjfjhjhdsrreqqklhu456hfz5", 36);
         BigInteger b2 = new BigInteger("wsfgsgds56346263fgfhghfghfhgfsrr5476hjfgdhdhg3N", 36);

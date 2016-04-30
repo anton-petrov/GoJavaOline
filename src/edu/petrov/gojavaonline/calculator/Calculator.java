@@ -2,15 +2,6 @@ package edu.petrov.gojavaonline.calculator;
 
 public class Calculator {
 
-    public static int setBit(int value, int n) {
-        return value = value | (1 << n);
-    }
-
-    public static int unsetBit(int value, int n) {
-        return value = value & ~(1 << n);
-    }
-
-
     public static void main(String[] args) {
 
         //Integer.toBinaryString();
