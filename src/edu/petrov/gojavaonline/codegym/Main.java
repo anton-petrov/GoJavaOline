@@ -308,6 +308,12 @@ class RectangleSquare {
 
         X.sort((o1, o2) -> o1 > o2 ? 1 : (o1 < o2 ? -1 : 0));
         Y.sort((o1, o2) -> o1 > o2 ? 1 : (o1 < o2 ? -1 : 0));
+//        Y.sort(new Comparator<Integer>() {
+//            @Override
+//            public int compare(Integer o1, Integer o2) {
+//                return 0;
+//            }
+//        });
 
         for (int i = 0; i < Y.size() - 1; i++) {
             for (int j = 0; j < X.size() - 1; j++) {
@@ -329,16 +335,6 @@ class RectangleSquare {
         public int x2;  // upper right point
         public int y2;
 
-        public Square() {
-        }
-
-        public Square(int x1, int y1, int x2, int y2) {
-            this.x1 = x1;
-            this.y1 = y1;
-            this.x2 = x2;
-            this.y2 = y2;
-        }
-
         public Square(int x, int h, int w) {
             this.x1 = x;
             this.y1 = 0;
@@ -354,10 +350,6 @@ class RectangleSquare {
                     ", x2=" + x2 +
                     ", y2=" + y2 +
                     '}';
-        }
-
-        public int getArea() {
-            return (x2 - x1) * (y2 - y1);
         }
     }
 }
