@@ -1,6 +1,9 @@
 package edu.petrov.gojavaonline.codegym;
 
-import java.math.BigInteger;
+
+import java.util.Deque;
+import java.util.LinkedList;
+
 
 class JoinCharacters {
     public int join(char[] input) {
@@ -170,6 +173,109 @@ class AddBinary {
     }
 }
 
+// =====================================================================================================================
+
+class GnomeFood {
+
+    public static int getRank(int[] objects, int elementIndex) {
+        int rank = 0;
+        for (int current = 0; current < objects.length; current++) {
+            if (objects[elementIndex] < objects[current]) {
+                rank++;
+            }
+        }
+        return rank;
+    }
+
+    public static int[] find(int[] gnames, int[] portions) {
+        int[] result = new int[gnames.length]; // result
+        int[] granks = new int[gnames.length]; // gnome ranks
+        int[] pranks = new int[gnames.length]; // portions ranks
+
+        for (int i = 0; i < gnames.length; i++) {
+            granks[i] = getRank(gnames, i);
+        }
+
+        for (int i = 0; i < portions.length; i++) {
+            pranks[i] = getRank(portions, i);
+        }
+
+        for (int i = 0; i < granks.length; i++) {
+            for (int j = 0; j < pranks.length; j++) {
+                if (granks[i] == pranks[j]) {
+                    result[i] = j;
+                    break;
+                }
+            }
+        }
+
+        return result;
+    }
+
+    /*
+        int[] gnames = new int[] { 5, 7, 6, 9, 4 };
+        int[] portions = new int[] { 8, 5, 6, 2, 3 };
+
+        int[] result = GnomeFood.find(gnames, portions);
+        for (int e : result)
+            System.out.println(e);
+     */
+}
+
+class UnixPath {
+    public final static String test = "/home/../var/./lib//file.txt";
+
+    public String simplify(String input) {
+        Deque<String> stringDeque = new LinkedList<>();
+        String[] path = input.split("/");
+
+        for (String current : path) {
+            if (current.equals("..")) {
+                if (!stringDeque.isEmpty()) {
+                    stringDeque.pop();
+                }
+            } else if (current.equals("") || current.equals(".")) {
+                // do nothing
+            } else {
+                stringDeque.push(current);
+            }
+        }
+
+        StringBuilder result = new StringBuilder();
+        while (true) {
+            if (!(result.length() > 1 && stringDeque.isEmpty())) {
+                result.append("/");
+            }
+            if (!stringDeque.isEmpty()) {
+                result.append(stringDeque.removeLast());
+            } else {
+                break;
+            }
+        }
+        return result.toString();
+    }
+}
+
+class LongestStabilityPeriod {
+    public int count(int[] gdp) {
+        int maxStablePeriod = gdp.length > 1 ? 0 : gdp.length;
+        int currentPeriod = 0;
+        for (int start = 0; start < gdp.length; start++) {
+            int end = gdp.length;
+            for (int i = start; i < end; i++) {
+                for (int j = start; j < end; j++) {
+                    if (Math.abs(gdp[i] - gdp[j]) > 1) {
+                        end = j;
+                        break;
+                    }
+                }
+            }
+            currentPeriod = end - start;
+            maxStablePeriod = Math.max(currentPeriod, maxStablePeriod);
+        }
+        return maxStablePeriod;
+    }
+}
 
 public class Main {
 
@@ -183,15 +289,9 @@ public class Main {
 
 
     public static void main(String[] args) {
-        BigInteger b1 = new BigInteger("zjfghfhdsdfathjjhgjhghjfjfjhjhdsrreqqklhu456hfz5", 36);
-        BigInteger b2 = new BigInteger("wsfgsgds56346263fgfhghfghfhgfsrr5476hjfgdhdhg3N", 36);
 
-        System.out.println(b1.add(b2).toString(36));
-
-        System.out.println(AddNumberBase36.add("zjfghfhdsdfathjjhgjhghjfjfjhjhdsrreqqklhu456hfz5",
-                "wsfgsgds56346263fgfhghfghfhgfsrr5476hjfgdhdhg3N"));
-
-        System.out.println(Integer.toString(Integer.parseInt("z", 36) + Integer.parseInt("z", 36), 36));
-        System.out.println(new AddBinary().add("11111111", "0"));
+        System.out.println(new LongestStabilityPeriod().count(new int[]{900, 900, 900, 900, 900, 900, 900, 900, 900, 900, 900, 900, 900, 900, 900}));
+        System.out.println(new LongestStabilityPeriod().count(new int[]{901, 901, 901, 902, 902, 903, 903, 902, 902, 901}));
+        System.out.println(new LongestStabilityPeriod().count(new int[]{1, 2, 2, 90, 91}));
     }
 }
