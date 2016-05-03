@@ -3,6 +3,7 @@ package edu.petrov.gojavaonline.codegym;
 
 import java.util.Deque;
 import java.util.LinkedList;
+import java.util.List;
 
 
 class JoinCharacters {
@@ -66,48 +67,42 @@ class MatrixTraversal {
         int n = input.length;
         int m = input[0].length;
         int[] output = new int[n * m];
-        if ( m == 1) {
+        if (m == 1) {
             output[0] = input[0][0];
             return output;
         }
-        int f = n-1;
-        int w = m-1;
+        int f = n - 1;
+        int w = m - 1;
 
         int c = 0;
         int i = 0;
         int j = 0;
         int p = 0;
 
-        while (c != n*m-1)
-        {
-            if (c >= n*m-1) break;
+        while (c != n * m - 1) {
+            if (c >= n * m - 1) break;
 
-            while (j < w)
-            {
+            while (j < w) {
                 output[c++] = input[i][j];
                 j++;
             }
-            while (i < f)
-            {
+            while (i < f) {
                 output[c++] = input[i][j];
                 i++;
             }
-            while (j > p)
-            {
+            while (j > p) {
                 output[c++] = input[i][j];
                 j--;
             }
             f--;
             w--;
             p++;
-            while (i > p)
-            {
+            while (i > p) {
                 output[c++] = input[i][j];
                 i--;
             }
         }
-        if(c == n*m-1)
-        {
+        if (c == n * m - 1) {
             output[c++] = input[i][j];
         }
         for (int e : output) {
@@ -156,20 +151,20 @@ class AddNumberBase36 {
 
 class AddBinary {
     String add(String a, String b) {
-        String sum = "";
-        int i = a.length()-1;
-        int j = b.length()-1;
+        StringBuilder sum = new StringBuilder();
+        int i = a.length() - 1;
+        int j = b.length() - 1;
         int c = 0;
         while (i >= 0 || j >= 0 || c > 0) {
             int ai = i >= 0 ? (a.charAt(i) == '1' ? 1 : 0) : 0;
             int bj = j >= 0 ? (b.charAt(j) == '1' ? 1 : 0) : 0;
             int s = (ai + bj + c) % 2;
-            sum = s + sum;
+            sum.insert(0, s);
             c = (ai + bj + c) / 2;
             i--;
             j--;
         }
-        return sum;
+        return sum.toString();
     }
 }
 
@@ -259,11 +254,11 @@ class UnixPath {
 class LongestStabilityPeriod {
     public int count(int[] gdp) {
         int maxStablePeriod = gdp.length > 1 ? 0 : gdp.length;
-        int currentPeriod = 0;
+        int currentPeriod;
         for (int start = 0; start < gdp.length; start++) {
             int end = gdp.length;
             for (int i = start; i < end; i++) {
-                for (int j = start; j < end; j++) {
+                for (int j = i + 1; j < end; j++) {
                     if (Math.abs(gdp[i] - gdp[j]) > 1) {
                         end = j;
                         break;
@@ -276,6 +271,108 @@ class LongestStabilityPeriod {
         return maxStablePeriod;
     }
 }
+
+class RectangleSquare {
+
+    private int getArea(int x1, int y1, int x2, int y2) {
+        return (x2 - x1) * (y2 - y1);
+    }
+
+    public int measure(int[] x, int[] h, int[] w) {
+
+        Deque<Square> squares = new LinkedList<>();
+        for (int i = 0; i < x.length; i++) {
+            squares.add(new Square(x[i], h[i], w[i]));
+        }
+        int sum = 0;
+
+        List<Integer> X = new LinkedList<>();
+        List<Integer> Y = new LinkedList<>();
+        for (Square s : squares) {
+            X.add(s.x1);
+            X.add(s.x2);
+            Y.add(s.y1);
+            Y.add(s.y2);
+        }
+
+        for (int i = 0; i < X.size() - 1; i++) {
+            if (X.get(i) == X.get(i + 1)) {
+                X.remove(i);
+            }
+        }
+        for (int i = 0; i < Y.size() - 1; i++) {
+            if (Y.get(i) == Y.get(i + 1)) {
+                Y.remove(i);
+            }
+        }
+
+        X.sort((o1, o2) -> o1 > o2 ? 1 : (o1 < o2 ? -1 : 0));
+        Y.sort((o1, o2) -> o1 > o2 ? 1 : (o1 < o2 ? -1 : 0));
+
+        for (int i = 0; i < Y.size() - 1; i++) {
+            for (int j = 0; j < X.size() - 1; j++) {
+                for (Square s : squares) {
+                    if (X.get(j) >= s.x1 && X.get(j + 1) <= s.x2 && Y.get(i) >= s.y1 && Y.get(i + 1) <= s.y2) {
+                        sum += getArea(X.get(j), Y.get(i), X.get(j + 1), Y.get(i + 1));
+                        break;
+                    }
+                }
+            }
+        }
+
+        return sum;
+    }
+
+    class Square {
+        public int x1;  // lower left point
+        public int y1;
+        public int x2;  // upper right point
+        public int y2;
+
+        public Square() {
+        }
+
+        public Square(int x1, int y1, int x2, int y2) {
+            this.x1 = x1;
+            this.y1 = y1;
+            this.x2 = x2;
+            this.y2 = y2;
+        }
+
+        public Square(int x, int h, int w) {
+            this.x1 = x;
+            this.y1 = 0;
+            this.x2 = x + w;
+            this.y2 = h;
+        }
+
+        @Override
+        public String toString() {
+            return "Square{" +
+                    "x1=" + x1 +
+                    ", y1=" + y1 +
+                    ", x2=" + x2 +
+                    ", y2=" + y2 +
+                    '}';
+        }
+
+        public int getArea() {
+            return (x2 - x1) * (y2 - y1);
+        }
+    }
+}
+
+//public class Alphabet {
+//    public boolean check(String input) {
+//
+//    }
+//}
+class ReversePolishNotation {
+    public int evaluate(String expression) {
+        return 3;
+    }
+}
+
 
 public class Main {
 
@@ -290,8 +387,7 @@ public class Main {
 
     public static void main(String[] args) {
 
-        System.out.println(new LongestStabilityPeriod().count(new int[]{900, 900, 900, 900, 900, 900, 900, 900, 900, 900, 900, 900, 900, 900, 900}));
-        System.out.println(new LongestStabilityPeriod().count(new int[]{901, 901, 901, 902, 902, 903, 903, 902, 902, 901}));
-        System.out.println(new LongestStabilityPeriod().count(new int[]{1, 2, 2, 90, 91}));
+        System.out.println(new RectangleSquare().measure(new int[]{0, 10, 20, 20, 30}, new int[]{10, 20, 30, 10, 20}, new int[]{60, 40, 10, 20, 10}));
+
     }
 }
