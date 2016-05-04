@@ -1,9 +1,13 @@
 package edu.petrov.gojavaonline.codegym;
 
 
+import java.util.Comparator;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Stack;
 
 
 class JoinCharacters {
@@ -306,14 +310,15 @@ class RectangleSquare {
             }
         }
 
-        X.sort((o1, o2) -> o1 > o2 ? 1 : (o1 < o2 ? -1 : 0));
-        Y.sort((o1, o2) -> o1 > o2 ? 1 : (o1 < o2 ? -1 : 0));
-//        Y.sort(new Comparator<Integer>() {
-//            @Override
-//            public int compare(Integer o1, Integer o2) {
-//                return 0;
-//            }
-//        });
+        Comparator ascending = new Comparator<Integer>() {
+            @Override
+            public int compare(Integer o1, Integer o2) {
+                return o1 > o2 ? 1 : (o1 < o2 ? -1 : 0);
+            }
+        };
+
+        X.sort(ascending);
+        Y.sort(ascending);
 
         for (int i = 0; i < Y.size() - 1; i++) {
             for (int j = 0; j < X.size() - 1; j++) {
@@ -359,9 +364,74 @@ class RectangleSquare {
 //
 //    }
 //}
+
 class ReversePolishNotation {
     public int evaluate(String expression) {
-        return 3;
+        return (int)Math.round(calc(expression));
+    }
+
+    public static Double calc(String input) {
+        Stack<Double> numbers = new Stack<>();
+        for (String number : input.split(" ")) {
+            Sign sign = Sign.find(number);
+            if (sign != null) {
+                calcSign(numbers, sign);
+            } else {
+                numbers.push(Double.parseDouble(number));
+            }
+        }
+        return numbers.pop();
+    }
+
+    protected static Stack<Double> calcSign(Stack<Double> numbers, Sign sign) {
+        numbers.push(sign.apply(numbers.pop(), numbers.pop()));
+        return numbers;
+    }
+
+    public enum Sign {
+
+        ADD("+") {
+            public double apply(double num1, double num2) {
+                return num2 + num1;
+            }
+        },
+        REMOVE("-") {
+            public double apply(double num1, double num2) {
+                return num2 - num1;
+            }
+        },
+        MULTIPLY("*") {
+            public double apply(double num1, double num2) {
+                return num2 * num1;
+            }
+        },
+        DIVIDE("/") {
+            public double apply(double num1, double num2) {
+                return num2 / num1;
+            }
+        };
+
+        private final String operatorText;
+
+        private Sign(String operatorText) {
+            this.operatorText = operatorText;
+        }
+
+        public abstract double apply(double x1, double x2);
+
+        private static final Map<String, Sign> map;
+
+        static {
+            map = new HashMap<>();
+            for (Sign sign : Sign.values()) {
+                map.put(sign.operatorText, sign);
+            }
+        }
+
+        public static Sign find(String sign) {
+            return map.get(sign);
+        }
+
     }
 }
 
