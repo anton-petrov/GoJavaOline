@@ -1,6 +1,5 @@
 package edu.petrov.gojavaonline.codegym;
 
-
 import java.util.*;
 
 
@@ -353,12 +352,6 @@ class RectangleSquare {
     }
 }
 
-//public class Alphabet {
-//    public boolean check(String input) {
-//
-//    }
-//}
-
 class ReversePolishNotation {
     public int evaluate(String expression) {
         return (int) Math.round(calc(expression));
@@ -499,8 +492,7 @@ class BinaryHeap2 {
         private void insert(BinaryTreeNode node, int value) {
             if (node == null) {
                 throw new NullPointerException("Argument 'node' must not be null!");
-            }
-            else if (value > node.value) {
+            } else if (value > node.value) {
                 if (node.right == null) {
                     node.right = createNode(value);
                 } else {
@@ -589,7 +581,7 @@ class BinaryHeap2 {
             if (node == null)
                 return;
             print(node.right, prefix + (isTail ? "    " : "│   "), false);
-            print(node.left, prefix + (isTail ?"    " : "│   "), true);
+            print(node.left, prefix + (isTail ? "    " : "│   "), true);
         }
     }
 
@@ -630,6 +622,28 @@ class BinaryHeap {
     }
 }
 
+class Alphabet {
+    public boolean check(String input) {
+        if (input == null || input == "") {
+            return false;
+        }
+        input = input.toLowerCase();
+        Set<String> alphabet = new HashSet<>();
+        for (int i = 0; i < input.length(); i++) {
+            if (input.charAt(i) >= 'a' && input.charAt(i) <= 'z') {
+                alphabet.add(Character.toString(input.charAt(i)));
+            }
+        }
+        return alphabet.size() == 26;
+    }
+}
+
+class ReverseBits {
+    public int reverse(int input) {
+        return Integer.reverse(input);
+    }
+}
+
 
 public class Main {
 
@@ -642,6 +656,6 @@ public class Main {
     }
 
     public static void main(String[] args) {
-
+        System.out.println(new ReverseBits().reverse(2));
     }
 }
