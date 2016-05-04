@@ -1,13 +1,7 @@
 package edu.petrov.gojavaonline.codegym;
 
 
-import java.util.Comparator;
-import java.util.Deque;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Stack;
+import java.util.*;
 
 
 class JoinCharacters {
@@ -367,7 +361,7 @@ class RectangleSquare {
 
 class ReversePolishNotation {
     public int evaluate(String expression) {
-        return (int)Math.round(calc(expression));
+        return (int) Math.round(calc(expression));
     }
 
     public static Double calc(String input) {
@@ -435,6 +429,207 @@ class ReversePolishNotation {
     }
 }
 
+class BinaryHeap2 {
+
+    public BinaryTree tree = new BinaryTree();
+
+    class BinaryTreeNode {
+        public BinaryTreeNode left = null;
+        public BinaryTreeNode right = null;
+        public int value;
+
+        public BinaryTreeNode() {
+
+        }
+
+        public BinaryTreeNode(int value) {
+            this.value = value;
+        }
+
+        public int minValue() {
+            if (left == null)
+                return value;
+            else
+                return left.minValue();
+        }
+
+        private boolean remove(BinaryTreeNode parent, int value) {
+            if (value < this.value) {
+                if (left != null)
+                    return left.remove(this, value);
+                else
+                    return false;
+            } else if (value > this.value) {
+                if (right != null)
+                    return right.remove(this, value);
+                else
+                    return false;
+            } else {
+                if (left != null && right != null) {
+                    this.value = right.minValue();
+                    right.remove(this, right.minValue());
+                } else if (parent.left == this) {
+                    parent.left = (left != null) ? left : right;
+                } else if (parent.right == this) {
+                    parent.right = (left != null) ? left : right;
+                }
+                return true;
+            }
+        }
+
+    }
+
+    public class BinaryTree {
+        private BinaryTreeNode root = null;
+
+        public BinaryTree() {
+
+        }
+
+        private BinaryTreeNode createNode(int value) {
+            BinaryTreeNode node = new BinaryTreeNode();
+            node.value = value;
+            return node;
+        }
+
+        private BinaryTreeNode createNode() {
+            return createNode(0);
+        }
+
+        private void insert(BinaryTreeNode node, int value) {
+            if (node == null) {
+                throw new NullPointerException("Argument 'node' must not be null!");
+            }
+            else if (value > node.value) {
+                if (node.right == null) {
+                    node.right = createNode(value);
+                } else {
+                    insert(node.right, value);
+                }
+
+            } else if (value < node.value) {
+                if (node.left == null) {
+                    node.left = createNode(value);
+                } else {
+                    insert(node.left, value);
+                }
+
+            } else if (value == node.value) {
+                throw new IllegalArgumentException("Argument '" + value + "' already exists in the tree!");
+            }
+        }
+
+        public void insert(int value) {
+            if (root == null) {
+                root = createNode(value);
+            } else {
+                insert(root, value);
+            }
+        }
+
+        private BinaryTreeNode find(BinaryTreeNode node, int value) {
+            if (node == null) {
+                return null;
+            } else if (value > node.value) {
+                return find(node.right, value);
+
+            } else if (value < node.value) {
+                return find(node.left, value);
+
+            } else if (value == node.value) {
+                return node;
+            }
+            return null;
+        }
+
+        public BinaryTreeNode find(int value) {
+            return find(root, value);
+        }
+
+        public int findMaximumValue(BinaryTreeNode node) {
+            int max = node.value;
+            if (node.left != null) {
+                max = Math.max(max, findMaximumValue(node.left));
+            }
+            if (node.right != null) {
+                max = Math.max(max, findMaximumValue(node.right));
+            }
+            return max;
+        }
+
+        public int findMaximumValue() {
+            if (root == null) {
+                return 0;
+            }
+            return findMaximumValue(root);
+        }
+
+        public boolean remove(int value) {
+            if (root == null)
+                return false;
+            else {
+                if (root.value == value) {
+                    BinaryTreeNode tmpRoot = new BinaryTreeNode();
+                    tmpRoot.left = root;
+                    boolean result = root.remove(tmpRoot, value);
+                    root = tmpRoot.left;
+                    return result;
+                } else {
+                    return root.remove(null, value);
+                }
+            }
+        }
+
+        public void print() {
+            print(root, "   ", true);
+        }
+
+        private void print(BinaryTreeNode node, String prefix, boolean isTail) {
+            System.out.println(prefix + (isTail ? "└── " : "├── ") + (node != null ? node.value : "null"));
+            if (node == null)
+                return;
+            print(node.right, prefix + (isTail ? "    " : "│   "), false);
+            print(node.left, prefix + (isTail ?"    " : "│   "), true);
+        }
+    }
+
+    public BinaryHeap2(int size) {
+
+    }
+
+    public void insert(int val) {
+        tree.insert(val);
+    }
+
+    public int poll() {
+        int maxValue = tree.findMaximumValue();
+        tree.remove(maxValue);
+        return maxValue;
+    }
+}
+
+class BinaryHeap {
+
+    private TreeMap<Integer, Integer> map = new TreeMap<>();
+
+    public BinaryHeap(int size) {
+
+    }
+
+    public void insert(int val) {
+        map.put(val, val);
+    }
+
+    public int poll() {
+        if (map.size() > 0) {
+            int max = map.lastKey();
+            map.remove(max);
+            return max;
+        }
+        return 0;
+    }
+}
+
 
 public class Main {
 
@@ -446,10 +641,18 @@ public class Main {
         return value = value & ~(1 << n);
     }
 
-
     public static void main(String[] args) {
 
-        System.out.println(new RectangleSquare().measure(new int[]{0, 10, 20, 20, 30}, new int[]{10, 20, 30, 10, 20}, new int[]{60, 40, 10, 20, 10}));
+        //System.out.println(new RectangleSquare().measure(new int[]{0, 10, 20, 20, 30}, new int[]{10, 20, 30, 10, 20}, new int[]{60, 40, 10, 20, 10}));
+
+        BinaryHeap heap = new BinaryHeap(1);
+        heap.insert(1);
+        heap.insert(2);
+        heap.insert(3);
+        System.out.println(heap.poll());
+        System.out.println(heap.poll());
+        System.out.println(heap.poll());
+        System.out.println(heap.poll());
 
     }
 }
