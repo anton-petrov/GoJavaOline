@@ -643,16 +643,5 @@ public class Main {
 
     public static void main(String[] args) {
 
-        //System.out.println(new RectangleSquare().measure(new int[]{0, 10, 20, 20, 30}, new int[]{10, 20, 30, 10, 20}, new int[]{60, 40, 10, 20, 10}));
-
-        BinaryHeap heap = new BinaryHeap(1);
-        heap.insert(1);
-        heap.insert(2);
-        heap.insert(3);
-        System.out.println(heap.poll());
-        System.out.println(heap.poll());
-        System.out.println(heap.poll());
-        System.out.println(heap.poll());
-
     }
 }
