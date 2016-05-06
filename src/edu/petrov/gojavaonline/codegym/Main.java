@@ -1,6 +1,5 @@
 package edu.petrov.gojavaonline.codegym;
 
-import java.lang.reflect.Array;
 import java.util.*;
 
 class JoinCharacters {
@@ -736,6 +735,25 @@ class BreakLine {
     }
 }
 
+class CSVParser {
+    public List<List<String>> parse(String input) {
+        List<List<String>> lines = new LinkedList<>();
+        String[] inputLines = input.split("\n");
+        for (int i = 0; i < inputLines.length; i++) {
+            List<String> buffer = new LinkedList<>();
+            lines.add(buffer);
+            for (String token : inputLines[i].split(",")) {
+                token = token.trim();
+                buffer.add(token);
+                System.out.print(token + " ");
+            }
+            System.out.println("\n");
+        }
+        return lines;
+    }
+}
+// three,for,
+
 public class Main {
 
     public static int setBit(int value, int n) {
@@ -747,6 +765,7 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        System.out.println(new BreakLine().format("abcdef ab c w", 5));
+        System.out.println(new CSVParser().parse("one,two\nthree,"));
+        System.out.println(",".split("1,,3").length);
     }
 }
