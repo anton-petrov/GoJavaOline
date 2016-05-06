@@ -754,6 +754,29 @@ class CSVParser {
 }
 // three,for,
 
+class WordNumber {
+    private boolean isEnglishWord(String word) {
+        word = word.toLowerCase();
+        for(int i = 0; i < word.length(); i++) {
+            if (!(word.charAt(i) >= 'a' && word.charAt(i) <= 'z')) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public int count(String input) {
+        int wordCount = 0;
+        if (input == "") return 0;
+        for( String str : input.split(" ") ) {
+            if (isEnglishWord(str)) {
+                wordCount++;
+            }
+        }
+        return wordCount;
+    }
+}
+
 public class Main {
 
     public static int setBit(int value, int n) {
