@@ -1,7 +1,7 @@
 package edu.petrov.gojavaonline.codegym;
 
+import java.lang.reflect.Array;
 import java.util.*;
-
 
 class JoinCharacters {
     public int join(char[] input) {
@@ -644,6 +644,97 @@ class ReverseBits {
     }
 }
 
+class Doubles {
+
+    public Double parse(String s) {
+        try {
+            return Double.parseDouble(s);
+        } catch(Exception e) {
+            return null;
+        }
+    }
+}
+
+class BinarySearch {
+    public int binarySearch(int[] array, int target, int left, int right) {
+        if (left >= right) {
+            return -(1 + left);
+        }
+        int mid = left + (right - left) / 2;
+        if (target == array[mid]) {
+            return mid;
+        } else if (target > array[mid]) {
+            return binarySearch(array, target, mid + 1, right);
+        } else if (target < array[mid]) {
+            return binarySearch(array, target, left, mid);
+        }
+        return 0;
+    }
+    public int find(int[] array, int target) {
+        return binarySearch(array, target, 0, array.length);
+    }
+}
+
+class BreakLine {
+    public String slice(String word, int width) {
+        StringBuilder result = new StringBuilder();
+        StringBuilder buffer = new StringBuilder();
+        for (int i = 0, counter = 0; i <= word.length(); i++, counter++) {
+            if (counter == width || i == word.length()) {
+                result.append(buffer);
+                if (i == word.length())
+                    break;
+                result.append("\n");
+                buffer = new StringBuilder();
+                counter = 0;
+            }
+            buffer.append(word.charAt(i));
+        }
+        return result.toString();
+    }
+
+    public String format(String input, int width) {
+        StringBuilder result = new StringBuilder();
+        Deque<String> words = new ArrayDeque<>();
+        for (String word : input.split(" ")) {
+            words.add(word);
+        }
+        Deque<String> slicedWords = new ArrayDeque<>();
+        for (String word : words) {
+            if (word.length() > width) {
+                for (String w : slice(word, width).split("\n")) {
+                    slicedWords.add(w);
+                }
+            }
+            else {
+                slicedWords.add(word);
+            }
+        }
+        words = slicedWords;
+        while (!words.isEmpty()) {
+            int numChars = 0;
+            StringBuffer buffer = new StringBuffer();
+            while (!words.isEmpty()) {
+                String word = words.removeFirst();
+                buffer.append(word);
+                numChars += word.length();
+                if (words.isEmpty()) break;
+                if (numChars + 1 + words.peekFirst().length() > width) {
+                    result.append(buffer);
+                    result.append("\n");
+                    break;
+                } else {
+                    numChars++;
+                    buffer.append(" ");
+                }
+            }
+            if (words.isEmpty()) {
+                result.append(buffer);
+            }
+        }
+        return result.toString();
+    }
+}
 
 public class Main {
 
@@ -656,6 +747,6 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        System.out.println(new ReverseBits().reverse(2));
+        System.out.println(new BreakLine().format("abcdef ab c w", 5));
     }
 }
