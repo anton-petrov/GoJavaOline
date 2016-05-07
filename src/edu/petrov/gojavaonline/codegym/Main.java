@@ -352,10 +352,6 @@ class RectangleSquare {
 }
 
 class ReversePolishNotation {
-    public int evaluate(String expression) {
-        return (int) Math.round(calc(expression));
-    }
-
     public static Double calc(String input) {
         Stack<Double> numbers = new Stack<>();
         for (String number : input.split(" ")) {
@@ -372,6 +368,10 @@ class ReversePolishNotation {
     protected static Stack<Double> calcSign(Stack<Double> numbers, Sign sign) {
         numbers.push(sign.apply(numbers.pop(), numbers.pop()));
         return numbers;
+    }
+
+    public int evaluate(String expression) {
+        return (int) Math.round(calc(expression));
     }
 
     public enum Sign {
@@ -397,14 +397,6 @@ class ReversePolishNotation {
             }
         };
 
-        private final String operatorText;
-
-        private Sign(String operatorText) {
-            this.operatorText = operatorText;
-        }
-
-        public abstract double apply(double x1, double x2);
-
         private static final Map<String, Sign> map;
 
         static {
@@ -414,9 +406,17 @@ class ReversePolishNotation {
             }
         }
 
+        private final String operatorText;
+
+        Sign(String operatorText) {
+            this.operatorText = operatorText;
+        }
+
         public static Sign find(String sign) {
             return map.get(sign);
         }
+
+        public abstract double apply(double x1, double x2);
 
     }
 }
@@ -424,6 +424,20 @@ class ReversePolishNotation {
 class BinaryHeap2 {
 
     public BinaryTree tree = new BinaryTree();
+
+    public BinaryHeap2(int size) {
+
+    }
+
+    public void insert(int val) {
+        tree.insert(val);
+    }
+
+    public int poll() {
+        int maxValue = tree.findMaximumValue();
+        tree.remove(maxValue);
+        return maxValue;
+    }
 
     class BinaryTreeNode {
         public BinaryTreeNode left = null;
@@ -583,20 +597,6 @@ class BinaryHeap2 {
             print(node.left, prefix + (isTail ? "    " : "│   "), true);
         }
     }
-
-    public BinaryHeap2(int size) {
-
-    }
-
-    public void insert(int val) {
-        tree.insert(val);
-    }
-
-    public int poll() {
-        int maxValue = tree.findMaximumValue();
-        tree.remove(maxValue);
-        return maxValue;
-    }
 }
 
 class BinaryHeap {
@@ -733,9 +733,17 @@ class BreakLine {
         }
         return result.toString();
     }
+
+    class WordNumber {
+        public int count(String input) {
+            if (input == "") return 0;
+            return input.toLowerCase().split("[^a-z]+").length;
+        }
+    }
+
 }
 
-class CSVParser {
+class CSVParser2 {
     public List<List<String>> parse(String input) {
         List<List<String>> lines = new LinkedList<>();
         String[] inputLines = input.split("\n");
@@ -752,28 +760,82 @@ class CSVParser {
         return lines;
     }
 }
-// three,for,
 
-class WordNumber {
-    private boolean isEnglishWord(String word) {
-        word = word.toLowerCase();
-        for(int i = 0; i < word.length(); i++) {
-            if (!(word.charAt(i) >= 'a' && word.charAt(i) <= 'z')) {
-                return false;
+class CSVParser {
+    public String[] splitByLines(String input) {
+        List<String> lines = new LinkedList<>();
+        StringBuilder stringBuffer = new StringBuilder();
+        boolean quoteMode = false;
+        for (int i = 0; i < input.length(); i++) {
+            if (quoteMode) {
+                if (input.charAt(i) == '"') {
+                    quoteMode = false;
+                }
+            } else {
+                if (input.charAt(i) == '\n') {
+                    lines.add(stringBuffer.toString());
+                    stringBuffer = new StringBuilder();
+                    continue;
+                } else if (input.charAt(i) == '"') {
+                    quoteMode = true;
+                }
             }
+            stringBuffer.append(input.charAt(i));
         }
-        return true;
+        if (stringBuffer.length() > 0) {
+            lines.add(stringBuffer.toString());
+        }
+        return lines.toArray(new String[0]);
     }
 
-    public int count(String input) {
-        int wordCount = 0;
-        if (input == "") return 0;
-        for( String str : input.split(" ") ) {
-            if (isEnglishWord(str)) {
-                wordCount++;
+    public List<List<String>> parse(String input) {
+        List<List<String>> lines = new LinkedList<>();
+        String[] inputLines = splitByLines(input);
+        for (int i = 0; i < inputLines.length; i++) {
+            List<String> buffer = new LinkedList<>();
+            lines.add(buffer);
+            for (int k = 0; k < inputLines[i].length(); ) {
+                String token = "";
+                // skip whitespace
+                while (k < inputLines[i].length() && inputLines[i].charAt(k) == ' ') {
+                    k++;
+                }
+                // double-quote
+                if (k < inputLines[i].length() && inputLines[i].charAt(k) == '\"') {
+                    k++;
+                    while (k < inputLines[i].length() && inputLines[i].charAt(k) != '\"') {
+                        if (k + 2 < inputLines[i].length() &&
+                                inputLines[i].charAt(k + 1) == '\"' && inputLines[i].charAt(k + 2) == '\"') {
+                            token += inputLines[i].charAt(k);
+                            k += 3;
+                            token += '\"';
+                        } else {
+                            token += inputLines[i].charAt(k);
+                            k++;
+                        }
+                    }
+                    // search next comma
+                    while (k < inputLines[i].length() && inputLines[i].charAt(k) != ',') {
+                        k++;
+                    }
+                    // read text until comma
+                } else {
+                    int t = k;
+                    while (k < inputLines[i].length() && inputLines[i].charAt(k) != ',') {
+                        k++;
+                    }
+                    if (k > t) {
+                        token = inputLines[i].substring(t, k);
+                    }
+                }
+                buffer.add(token);
+                if (k < inputLines[i].length() && inputLines[i].charAt(k) == ',' && k + 1 >= inputLines[i].length()) {
+                    buffer.add("");
+                }
+                k++;
             }
         }
-        return wordCount;
+        return lines;
     }
 }
 
@@ -788,7 +850,13 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        System.out.println(new CSVParser().parse("one,two\nthree,"));
-        System.out.println(",".split("1,,3").length);
+        System.out.println(new CSVParser().parse("one,\"tw\"\"o\"\nthree,"));
+        System.out.println(new CSVParser().parse("one,\"tw\"\"o\"\n\"thr,ee\",\""));
+        System.out.println(new CSVParser().parse("\"thr,ee\",\""));
+
+        System.out.println(new CSVParser().parse(",,,"));
+
+        System.out.println(new CSVParser().splitByLines("\"a\nb\"\nc \"123\"\"567\""));
+
     }
 }
