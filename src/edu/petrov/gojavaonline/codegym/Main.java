@@ -866,6 +866,27 @@ class LonelyNumber2 {
     }
 }
 
+class FirstUniqueCharacter {
+
+    public Character find(String s) {
+        Character result = null;
+        Map<Character, Integer> map = new HashMap<>();
+        for (int i = 0; i < s.length(); i++) {
+            Integer charCount = map.get(s.charAt(i));
+            if (charCount != null)
+                map.put(s.charAt(i), charCount + 1);
+            else
+                map.put(s.charAt(i), 1);
+        }
+        for (Map.Entry<Character, Integer> entry : map.entrySet()) {
+            if (entry.getValue() == 1) {
+                return entry.getKey();
+            }
+        }
+        return result;
+    }
+}
+
 class LonelyNumber {
 
     public static int setBit(int value, int position) {
@@ -902,8 +923,6 @@ class LonelyNumber {
 
 public class Main {
 
-
-
     public static void main(String[] args) {
 //        System.out.println(new CSVParser().parse("one,\"tw\"\"o\"\nthree,"));
 //        System.out.println(new CSVParser().parse("one,\"tw\"\"o\"\n\"thr,ee\",\""));
@@ -913,10 +932,12 @@ public class Main {
 //
 //        System.out.println(new CSVParser().splitByLines("\"a\nb\"\nc \"123\"\"567\""));
 
-        System.out.println(new LonelyNumber().find(new int[]{1, 1, 1, 2, 1, 12, 12, 12, 12, 12, 2, 2, 1, 2, 5, 2, 3, 3, 3, 3, 3, 14, 14, 14, 14, 14}));
-        System.out.println(new LonelyNumber().find(new int[]{-1, -1, -1, -1, -1, -7}));
+//        System.out.println(new LonelyNumber().find(new int[]{1, 1, 1, 2, 1, 12, 12, 12, 12, 12, 2, 2, 1, 2, 5, 2, 3, 3, 3, 3, 3, 14, 14, 14, 14, 14}));
+//        System.out.println(new LonelyNumber().find(new int[]{-1, -1, -1, -1, -1, -7}));
 
 //        System.out.println(new LonelyNumber().getBit(1, 0));
+
+        System.out.println(new FirstUniqueCharacter().find("a a b cc d"));
 
     }
 }
