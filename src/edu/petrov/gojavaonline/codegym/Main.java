@@ -34,6 +34,7 @@ class FirstOddNumber {
     }
 }
 
+@SuppressWarnings("all")
 class MatrixSnakeTraversal {
     public int[] print(int[][] input) {
 
@@ -57,6 +58,7 @@ class MatrixSnakeTraversal {
     }
 }
 
+@SuppressWarnings("all")
 class MatrixTraversal {
     public int[] print(int[][] input) {
         if (input == null || input.length == 0 || input[0].length == 0) return new int[0];
@@ -108,6 +110,7 @@ class MatrixTraversal {
     }
 }
 
+@SuppressWarnings("all")
 class FindMaxNumber {
     public int max(int[] input) {
         int max = Integer.MIN_VALUE;
@@ -120,6 +123,7 @@ class FindMaxNumber {
     }
 }
 
+@SuppressWarnings("all")
 class AddNumberBase36 {
 
     public static String add(String a, String b) {
@@ -145,7 +149,8 @@ class AddNumberBase36 {
     }
 }
 
-class AddBinary {
+@SuppressWarnings("all")
+class AddBinary2 {
     String add(String a, String b) {
         StringBuilder sum = new StringBuilder();
         int i = a.length() - 1;
@@ -164,8 +169,43 @@ class AddBinary {
     }
 }
 
-// =====================================================================================================================
+@SuppressWarnings("all")
+class AddBinary {
+    String add(String a, String b) {
+        List<Integer> argumentA = new ArrayList<>();
+        List<Integer> argumentB = new ArrayList<>();
+        List<Integer> result = new ArrayList<>();
+        result.add(0);
+        for (int i = a.length() - 1; i >= 0; i--) {
+            argumentA.add(a.charAt(i) - '0');
+        }
+        for (int i = b.length() - 1; i >= 0; i--) {
+            argumentB.add(b.charAt(i) - '0');
+        }
+        for (int i = 0; i < Math.max(argumentA.size(), argumentB.size()); i++) {
+            //Если первый аогумент короче второго
+            if (argumentA.size() - 1 < i) {
+                argumentA.add(0);
+            }
+            if (argumentB.size() - 1 < i) {
+                argumentA.add(0);
+            }
 
+            result.add((argumentA.get(i) + argumentB.get(i) + result.get(i)) / 2);
+            result.set(i, (argumentA.get(i) ^ argumentB.get(i) ^ result.get(i)));
+        }
+        if (result.get(result.size() - 1) == 0) {
+            result.remove(result.size() - 1);
+        }
+        StringBuilder stringResult = new StringBuilder();
+        for (int i = result.size() - 1; i >= 0; i--) {
+            stringResult.append(result.get(i));
+        }
+        return stringResult.toString();
+    }
+}
+
+@SuppressWarnings("all")
 class GnomeFood {
 
     public static int getRank(int[] objects, int elementIndex) {
@@ -213,6 +253,7 @@ class GnomeFood {
      */
 }
 
+@SuppressWarnings("all")
 class UnixPath {
     public final static String test = "/home/../var/./lib//file.txt";
 
@@ -247,7 +288,7 @@ class UnixPath {
     }
 }
 
-class LongestStabilityPeriod {
+class LongestStabilityPeriod2 {
     public int count(int[] gdp) {
         int maxStablePeriod = gdp.length > 1 ? 0 : gdp.length;
         int currentPeriod;
@@ -265,6 +306,36 @@ class LongestStabilityPeriod {
             maxStablePeriod = Math.max(currentPeriod, maxStablePeriod);
         }
         return maxStablePeriod;
+    }
+}
+
+class LongestStabilityPeriod {
+    public int count(int[] gdp) {
+        int result = 0;
+        if (gdp.length == 0) {
+            return 0;
+        }
+        if (gdp.length == 1) {
+            return 1;
+        }
+        int tmpResult = 0;
+        for (int i = 0; i < gdp.length; i++) {
+            int min = gdp[i];
+            int max = gdp[i];
+            for (int j = i; j < gdp.length; j++) {
+                if (gdp[j] > max) max = gdp[j];
+                if (gdp[j] < min) min = gdp[j];
+                if ((max - min) > 1) {
+                    if (tmpResult > result) result = tmpResult;
+                    tmpResult = 0;
+                    break;
+                }
+                if ((gdp[i] - gdp[j]) >= -1 && (gdp[i] - gdp[j]) <= 1) {
+                    tmpResult++;
+                }
+            }
+        }
+        return result;
     }
 }
 
@@ -648,7 +719,7 @@ class Doubles {
     public Double parse(String s) {
         try {
             return Double.parseDouble(s);
-        } catch(Exception e) {
+        } catch (Exception e) {
             return null;
         }
     }
@@ -669,6 +740,7 @@ class BinarySearch {
         }
         return 0;
     }
+
     public int find(int[] array, int target) {
         return binarySearch(array, target, 0, array.length);
     }
@@ -704,8 +776,7 @@ class BreakLine {
                 for (String w : slice(word, width).split("\n")) {
                     slicedWords.add(w);
                 }
-            }
-            else {
+            } else {
                 slicedWords.add(word);
             }
         }
@@ -924,20 +995,6 @@ class LonelyNumber {
 public class Main {
 
     public static void main(String[] args) {
-//        System.out.println(new CSVParser().parse("one,\"tw\"\"o\"\nthree,"));
-//        System.out.println(new CSVParser().parse("one,\"tw\"\"o\"\n\"thr,ee\",\""));
-//        System.out.println(new CSVParser().parse("\"thr,ee\",\""));
-//
-//        System.out.println(new CSVParser().parse(",,,"));
-//
-//        System.out.println(new CSVParser().splitByLines("\"a\nb\"\nc \"123\"\"567\""));
-
-//        System.out.println(new LonelyNumber().find(new int[]{1, 1, 1, 2, 1, 12, 12, 12, 12, 12, 2, 2, 1, 2, 5, 2, 3, 3, 3, 3, 3, 14, 14, 14, 14, 14}));
-//        System.out.println(new LonelyNumber().find(new int[]{-1, -1, -1, -1, -1, -7}));
-
-//        System.out.println(new LonelyNumber().getBit(1, 0));
-
-        System.out.println(new FirstUniqueCharacter().find("a a b cc d"));
 
     }
 }
