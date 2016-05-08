@@ -839,24 +839,84 @@ class CSVParser {
     }
 }
 
+class BitsPalindrome {
+    public boolean isPalindrome(int input) {
+        return Integer.toBinaryString(input).equals(Integer.toBinaryString(Integer.reverse(input)));
+    }
+}
+
+class LonelyNumber2 {
+    public int find(int[] input) {
+        int result = 0;
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int i = 0; i < input.length; i++) {
+            Integer oldValue = map.get(input[i]);
+            if (oldValue != null)
+                map.replace(input[i], oldValue, oldValue + 1);
+            else
+                map.put(input[i], 1);
+        }
+        for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
+            if (entry.getValue() == 1) {
+                result = entry.getKey();
+                return result;
+            }
+        }
+        return result;
+    }
+}
+
+class LonelyNumber {
+
+    public static int setBit(int value, int position) {
+        return (value | (1 << position));
+    }
+
+    public static int unsetBit(int value, int position) {
+        return (value & ~(1 << position));
+    }
+
+    public int getBit(int value, int position) {
+        return ((value >>> position) & 1);
+    }
+
+    public int find(int[] input) {
+        int f = 0;
+        int[] bits = new int[32];
+
+        for (int i = 0; i < input.length; i++) {
+            for (int j = 0; j < bits.length; j++) {
+                bits[j] += getBit(input[i], j);
+            }
+        }
+
+        for (int j = 0; j < bits.length; j++) {
+            if (bits[j] % 5 != 0) {
+                f = setBit(f, j);
+            }
+        }
+        return f;
+    }
+
+}
+
 public class Main {
 
-    public static int setBit(int value, int n) {
-        return value = value | (1 << n);
-    }
 
-    public static int unsetBit(int value, int n) {
-        return value = value & ~(1 << n);
-    }
 
     public static void main(String[] args) {
-        System.out.println(new CSVParser().parse("one,\"tw\"\"o\"\nthree,"));
-        System.out.println(new CSVParser().parse("one,\"tw\"\"o\"\n\"thr,ee\",\""));
-        System.out.println(new CSVParser().parse("\"thr,ee\",\""));
+//        System.out.println(new CSVParser().parse("one,\"tw\"\"o\"\nthree,"));
+//        System.out.println(new CSVParser().parse("one,\"tw\"\"o\"\n\"thr,ee\",\""));
+//        System.out.println(new CSVParser().parse("\"thr,ee\",\""));
+//
+//        System.out.println(new CSVParser().parse(",,,"));
+//
+//        System.out.println(new CSVParser().splitByLines("\"a\nb\"\nc \"123\"\"567\""));
 
-        System.out.println(new CSVParser().parse(",,,"));
+        System.out.println(new LonelyNumber().find(new int[]{1, 1, 1, 2, 1, 12, 12, 12, 12, 12, 2, 2, 1, 2, 5, 2, 3, 3, 3, 3, 3, 14, 14, 14, 14, 14}));
+        System.out.println(new LonelyNumber().find(new int[]{-1, -1, -1, -1, -1, -7}));
 
-        System.out.println(new CSVParser().splitByLines("\"a\nb\"\nc \"123\"\"567\""));
+//        System.out.println(new LonelyNumber().getBit(1, 0));
 
     }
 }
