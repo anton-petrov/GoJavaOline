@@ -183,7 +183,6 @@ class AddBinary {
             argumentB.add(b.charAt(i) - '0');
         }
         for (int i = 0; i < Math.max(argumentA.size(), argumentB.size()); i++) {
-            //Если первый аогумент короче второго
             if (argumentA.size() - 1 < i) {
                 argumentA.add(0);
             }
@@ -242,15 +241,6 @@ class GnomeFood {
 
         return result;
     }
-
-    /*
-        int[] gnames = new int[] { 5, 7, 6, 9, 4 };
-        int[] portions = new int[] { 8, 5, 6, 2, 3 };
-
-        int[] result = GnomeFood.find(gnames, portions);
-        for (int e : result)
-            System.out.println(e);
-     */
 }
 
 @SuppressWarnings("all")
@@ -363,12 +353,12 @@ class RectangleSquare {
         }
 
         for (int i = 0; i < X.size() - 1; i++) {
-            if (X.get(i) == X.get(i + 1)) {
+            if (X.get(i).equals(X.get(i + 1))) {
                 X.remove(i);
             }
         }
         for (int i = 0; i < Y.size() - 1; i++) {
-            if (Y.get(i) == Y.get(i + 1)) {
+            if (Y.get(i).equals(Y.get(i + 1))) {
                 Y.remove(i);
             }
         }
@@ -694,7 +684,7 @@ class BinaryHeap {
 
 class Alphabet {
     public boolean check(String input) {
-        if (input == null || input == "") {
+        if (input == null || input.equals("")) {
             return false;
         }
         input = input.toLowerCase();
@@ -715,7 +705,6 @@ class ReverseBits {
 }
 
 class Doubles {
-
     public Double parse(String s) {
         try {
             return Double.parseDouble(s);
@@ -807,7 +796,7 @@ class BreakLine {
 
     class WordNumber {
         public int count(String input) {
-            if (input == "") return 0;
+            if (input.equals("")) return 0;
             return input.toLowerCase().split("[^a-z]+").length;
         }
     }
