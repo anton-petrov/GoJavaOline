@@ -981,9 +981,35 @@ class LonelyNumber {
 
 }
 
+class ColorChain {
+    public void getPermutations(int index, int[] output, ArrayList<int[]> solutions, int[] boxes)
+    {
+        if (index == output.length)
+        {
+            int[] temp = new int[output.length];
+            System.arraycopy(output, 0, temp, 0, output.length);
+            solutions.add(temp);
+            return;
+        }
+        for (int b: boxes)
+        {
+            output[index] = b;
+            getPermutations(index + 1, output, solutions, boxes);
+        }
+    }
+}
+
 public class Main {
 
     public static void main(String[] args) {
-
+        ArrayList<int[]> solutions = new ArrayList<>();
+        int objectCount = 6;
+        new ColorChain().getPermutations(0, new int[objectCount], solutions, new int[]{1, 2, 3});
+        for (int[] temp: solutions)
+        {
+            for (int i: temp)
+                System.out.print(i + "  ");
+            System.out.println();
+        }
     }
 }
