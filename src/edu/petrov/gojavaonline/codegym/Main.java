@@ -982,6 +982,12 @@ class LonelyNumber {
 }
 
 class ColorChain {
+    /**
+     * @param index
+     * @param output
+     * @param solutions
+     * @param boxes
+     */
     public void getPermutations(int index, int[] output, ArrayList<int[]> solutions, int[] boxes)
     {
         if (index == output.length)
@@ -991,11 +997,34 @@ class ColorChain {
             solutions.add(temp);
             return;
         }
-        for (int b: boxes)
-        {
+        for (int b : boxes) {
             output[index] = b;
             getPermutations(index + 1, output, solutions, boxes);
         }
+    }
+
+    /**
+     *
+     * @param N
+     * @return
+     */
+    public int count(int N) {
+        ArrayList<int[]> solutions = new ArrayList<>();
+        getPermutations(0, new int[N], solutions, new int[]{1, 2, 3});
+        int count = 0;
+        for (int i = 0; i < solutions.size(); i++) {
+            int sum = 0;
+            for (int k = 0; k < solutions.get(i).length; k++) {
+                sum += solutions.get(i)[k];
+                if (sum > N) {
+                    break;
+                }
+            }
+            if (sum <= N) {
+                count++;
+            }
+        }
+        return count;
     }
 }
 
