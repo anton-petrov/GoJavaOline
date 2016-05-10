@@ -1009,19 +1009,28 @@ class ColorChain {
      * @return
      */
     public int count(int N) {
-        ArrayList<int[]> solutions = new ArrayList<>();
-        getPermutations(0, new int[N], solutions, new int[]{1, 2, 3});
+        ArrayList<ArrayList<int[]>> allSolutions = new ArrayList<>();
+        for (int i = 1; i <= N; i++) {
+            ArrayList<int[]> solutions = new ArrayList<>();
+            getPermutations(0, new int[i], solutions, new int[]{1, 2, 3});
+            allSolutions.add(solutions);
+        }
         int count = 0;
-        for (int i = 0; i < solutions.size(); i++) {
-            int sum = 0;
-            for (int k = 0; k < solutions.get(i).length; k++) {
-                sum += solutions.get(i)[k];
-                if (sum > N) {
-                    break;
+        for (ArrayList<int[]> solutions : allSolutions) {
+            for (int i = 0; i < solutions.size(); i++) {
+                int sum = 0;
+                for (int k = 0; k < solutions.get(i).length; k++) {
+                    sum += solutions.get(i)[k];
+                    //System.out.print(solutions.get(i)[k] + " ");
+                    if (sum > N) {
+                        break;
+                    }
                 }
-            }
-            if (sum <= N) {
-                count++;
+                if (sum == N) {
+                    count++;
+                    //System.out.print(" count = " + count);
+                }
+                //System.out.println(" sum = " + sum);
             }
         }
         return count;
@@ -1031,14 +1040,9 @@ class ColorChain {
 public class Main {
 
     public static void main(String[] args) {
-        ArrayList<int[]> solutions = new ArrayList<>();
-        int objectCount = 6;
-        new ColorChain().getPermutations(0, new int[objectCount], solutions, new int[]{1, 2, 3});
-        for (int[] temp: solutions)
-        {
-            for (int i: temp)
-                System.out.print(i + "  ");
-            System.out.println();
-        }
+        new ColorChain().count(10);
+        System.out.println();
     }
 }
+
+//  11
