@@ -1037,12 +1037,28 @@ class ColorChain {
     }
 }
 
-public class Main {
-
-    public static void main(String[] args) {
-        new ColorChain().count(10);
-        System.out.println();
+class KmpSmallestPeriod {
+    public String findSmalletstPeriod(String input) {
+        int len = input.length();
+        int i, j;
+        for (i = 1; i <= len; i++) {
+            if (len % i == 0) {
+                for (j = i; j < len; j++)
+                    if (input.charAt(j) != input.charAt(j % i))
+                        break;
+                if (j == len) {
+                    break;
+                }
+            }
+        }
+        return input.substring(0, i);
     }
 }
 
-//  11
+
+public class Main {
+
+    public static void main(String[] args) {
+
+    }
+}
