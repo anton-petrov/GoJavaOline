@@ -982,16 +982,58 @@ class LonelyNumber {
 }
 
 class ColorChain {
+    public int count(int N) {
+        int[] results = new int[N + 1];
+        return getNumberOfStrips(N, results);
+    }
+
+    int getNumberOfStrips(int N, int[] results) {
+        if (N < 0) {
+            return -1;
+        }
+        if (N == 0) {
+            return 0;
+        }
+        if (N == 1 || N == 2) {
+            results[N] = N;
+            return N;
+        }
+        if (N == 3) {
+            results[N] = 4;
+            return results[N];
+        }
+
+        if (N != 0 && results[N] != 0) {
+            return results[N];
+        }
+
+        int lastStripIs1m = getNumberOfStrips(N - 1, results);
+        int lastStripIs2m = getNumberOfStrips(N - 2, results);
+        int lastStripIs3m = getNumberOfStrips(N - 3, results);
+
+        if (lastStripIs1m < 0) {
+            lastStripIs1m = 0;
+        }
+        if (lastStripIs2m < 0) {
+            lastStripIs2m = 0;
+        }
+        if (lastStripIs3m < 0) {
+            lastStripIs3m = 0;
+        }
+        results[N] = lastStripIs1m + lastStripIs2m + lastStripIs3m;
+        return results[N];
+    }
+}
+
+class ColorChain2 {
     /**
      * @param index
      * @param output
      * @param solutions
      * @param boxes
      */
-    public void getPermutations(int index, int[] output, ArrayList<int[]> solutions, int[] boxes)
-    {
-        if (index == output.length)
-        {
+    public void getPermutations(int index, int[] output, ArrayList<int[]> solutions, int[] boxes) {
+        if (index == output.length) {
             int[] temp = new int[output.length];
             System.arraycopy(output, 0, temp, 0, output.length);
             solutions.add(temp);
@@ -1004,7 +1046,6 @@ class ColorChain {
     }
 
     /**
-     *
      * @param N
      * @return
      */
@@ -1056,9 +1097,9 @@ class KmpSmallestPeriod {
 }
 
 class KmpSubMove {
-    public String cyclicShift(String s, int n ) {
+    public String cyclicShift(String s, int n) {
         if (s == null || s.equals("")) return "";
-        return s.substring(s.length()-n) + s.substring(0, s.length()-n);
+        return s.substring(s.length() - n) + s.substring(0, s.length() - n);
     }
 
     public int subMoveQuantity(String inputStr, String resultStr) {
@@ -1074,6 +1115,11 @@ class KmpSubMove {
     }
 }
 
+class AverageNumber {
+    public static int average(int a, int b) {
+        return (a + b) / 2;
+    }
+}
 
 public class Main {
 
