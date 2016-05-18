@@ -1055,10 +1055,31 @@ class KmpSmallestPeriod {
     }
 }
 
+class KmpSubMove {
+    public String cyclicShift(String s, int n ) {
+        if (s == null || s.equals("")) return "";
+        return s.substring(s.length()-n) + s.substring(0, s.length()-n);
+    }
+
+    public int subMoveQuantity(String inputStr, String resultStr) {
+        int r;
+        if (inputStr.length() == 1) return 0;
+        for (r = 1; r < inputStr.length(); r++) {
+            if (cyclicShift(inputStr, r).equals(resultStr)) {
+                break;
+            }
+        }
+        if (r == inputStr.length()) r = -1;
+        return r;
+    }
+}
+
 
 public class Main {
 
     public static void main(String[] args) {
+        System.out.println(new KmpSubMove().cyclicShift("abcde", 2));
+        System.out.println(new KmpSubMove().subMoveQuantity("abcde", "deabc"));
 
     }
 }
