@@ -982,12 +982,19 @@ class LonelyNumber {
 }
 
 class ColorChain {
+
+    public int count2(int N) {
+        if (N == 0 || N == 1 || N == 2) return N;
+        if (N == 3) return 4;
+        return count(N - 1) + count(N - 2) + count(N - 3);
+    }
+
     public int count(int N) {
         int[] results = new int[N + 1];
         return getNumberOfStrips(N, results);
     }
 
-    int getNumberOfStrips(int N, int[] results) {
+    private int getNumberOfStrips(int N, int[] results) {
         if (N < 0) {
             return -1;
         }
@@ -1003,7 +1010,7 @@ class ColorChain {
             return results[N];
         }
 
-        if (N != 0 && results[N] != 0) {
+        if (results[N] != 0) {
             return results[N];
         }
 
